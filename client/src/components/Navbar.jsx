@@ -4,8 +4,11 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import {useNavigate} from 'react-router-dom';
 
-function Navbar() {
+const Navbar = () => {
+    const navigate = useNavigate();
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -18,11 +21,11 @@ function Navbar() {
                         Customer Support
                     </Button>
 
-                    <Button color="inherit">
+                    <Button color="inherit" onClick={() => navigate('/auth?mode=sign_up')}>
                         Sign Up
                     </Button>
 
-                    <Button color="inherit">
+                    <Button color="inherit" onClick={() => navigate('/auth?mode=sign_in')}>
                         Login
                     </Button>
 
