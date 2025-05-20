@@ -6,14 +6,14 @@ import FeatureTwoPicture from '../assets/padlock_diary.jpg';
 import FeatureThreePicture from '../assets/infinite_entries.jpg';
 import DefaultProfilePicture from '../assets/default_profile_pic.jpg';
 import CustomButton from '../components/CustomButton';
-import Link from '@mui/material/Link';
 import Divider from '@mui/material/Divider';
 import Paragraph from '../components/Paragraph';
 import Box from "@mui/material/Box";
 import FeatureDescriptionCard from '../components/FeatureDescriptionCard';
 import CustomerReviewCard from '../components/CustomerReviewCard';
+import Footer from '../components/Footer';
 
-function Home() {
+const Home = () => {
     return (
         <div>
             <Navbar />
@@ -143,46 +143,7 @@ function Home() {
 
             <Divider />
 
-            <Box sx={{ backgroundColor: "#343a40", color: "#ffffff", mt: 10 }}>
-
-                <br />
-                
-                <Heading 
-                    text="Crypt Journal"
-
-                    variant="h5"
-
-                    align="center"
-
-                />
-                
-                <Box display="flex" justifyContent="center" gap= {6} sx={{ mt: 3 }} >
-                    <Link href="#" color="#ffffff">
-                        Customer Support
-                    </Link>
-
-                    <Link href="#" color="#ffffff">
-                        Privacy Policy
-                    </Link>
-
-                    <Link href="#" color="#ffffff">
-                        Terms & Conditions
-                    </Link>
-                </Box>
-
-                <Paragraph 
-                    text="@ 2025 Crypt Journal. All rights reserved."
-                    
-                    variant="body1"
-
-                    align="center"
-
-                    sx={{ mt: 3 }}
-                />
-
-                <br />
-
-            </Box>
+            <Footer />
 
         </div>
     );
