@@ -34,14 +34,14 @@ const Footer = () => {
             </Box>
 
             <Paragraph 
-                text="@ 2025 Crypt Journal. All rights reserved."
-                
                 variant="body1"
 
                 align="center"
 
                 sx={{ mt: 3 }}
-            />
+            >
+                @ 2025 Crypt Journal. All rights reserved.
+            </Paragraph>
 
             <br />
 
