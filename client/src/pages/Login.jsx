@@ -61,15 +61,15 @@ const Login = ( { mode, switchForms } ) => {
                 sx={{ mt: 5 }}
             />
 
-            <Paragraph 
-                text = "Fill in the fields below to sign into your account."
-
+            <Paragraph
                 variant="body1"
 
                 align="center"
 
                 sx={{ mt: 5 }}
-            />
+            >
+                Fill in the fields below to sign into your account.
+            </Paragraph>
 
             <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
                 <CustomInputField
@@ -101,15 +101,21 @@ const Login = ( { mode, switchForms } ) => {
                 </Link>
 
                 
-                <Paragraph
-                    text="Don't have An Account Yet?"
+                <Box display="flex" justifyContent="center">
+                    <Paragraph
+                        variant="body1"
 
-                    variant="body1"
+                        align="center"
 
-                    align="center"
-
-                    sx={{ mt: 3 }}
-                />
+                        sx={{ mt: 3 }}
+                    >
+                        Don't have An Account Yet? {' '}
+                        <Link href="#" color="primary">
+                            Sign Up Here
+                        </Link>
+                    </Paragraph>
+                    
+                </Box>
             </Box>
 
             <Footer />
