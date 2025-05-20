@@ -22,14 +22,14 @@ const ForgotPassword = () => {
             />
 
             <Paragraph
-                text="Enter your email address below, so that we can send the password reset link to it."
-
                 variant="body1"
 
                 align="center"
 
                 sx={{ mt: 5 }}
-            />
+            >
+                Enter your email address below, so that we can send the password reset link to it.
+            </Paragraph>
 
             <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
                 <CustomInputField
