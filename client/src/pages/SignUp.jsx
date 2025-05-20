@@ -64,14 +64,14 @@ const SignUp = ( { mode, switchForms } ) => {
             />
 
             <Paragraph
-                text="Sign up for a free account - with unlimited possibilities!"
-
                 variant="body1"
 
                 align="center"
 
                 sx={{ mt: 5 }}
-            />
+            >
+                Sign up for a free account - with unlimited possibilities!
+            </Paragraph>
 
             <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
                 <CustomInputField
