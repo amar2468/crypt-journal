@@ -42,27 +42,27 @@ const Home = () => {
 
             <Box sx={{ maxWidth: 600, mx: "auto", marginTop: 5 }}>
                 <Paragraph
-                    text="Presenting to you - a completely secret & free online diary!  
-                    You can finally jot down all your thoughts/ideas using this diary online
-                    and not worry about paying for anything or about the security aspect."
-
                     variant="body1"
 
                     align="center"
 
                     sx={{ mt: 2 }}
-                />
+                >
+                    Presenting to you - a completely secret & free online diary!  
+                    You can finally jot down all your thoughts/ideas using this diary online
+                    and not worry about paying for anything or about the security aspect.
+                </Paragraph>
 
-                <Paragraph 
-                    text="Just a few reasons to use this secret diary web app..."
-
+                <Paragraph
                     variant="body1"
 
                     align="center"
 
                     sx={{ mt: 5, mb: 5 }}
                 
-                />
+                >
+                    Just a few reasons to use this secret diary web app...
+                </Paragraph>
 
             </Box>
 
