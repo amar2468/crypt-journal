@@ -1,5 +1,6 @@
 import Heading from "./Heading";
 import Paragraph from "./Paragraph";
+import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 
@@ -24,11 +25,19 @@ const Footer = () => {
                     Customer Support
                 </Link>
 
-                <Link href="#" color="#ffffff">
+                <Link
+                    component={RouterLink}
+                    to="/privacy_policy"
+                    color="#ffffff"
+                >
                     Privacy Policy
                 </Link>
 
-                <Link href="#" color="#ffffff">
+                <Link
+                    component={RouterLink}
+                    to="/terms_and_conditions"
+                    color="#ffffff"
+                >
                     Terms & Conditions
                 </Link>
             </Box>
