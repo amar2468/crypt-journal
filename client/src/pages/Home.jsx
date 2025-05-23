@@ -34,7 +34,13 @@ const Home = () => {
                 style={{ display: "block", margin: "0 auto" }} 
             />
 
-            <CustomButton variant="contained" color="primary" size="large" sx={{ display: "block", mx: "auto", mb: 5 }}>
+            <CustomButton
+                variant="contained"
+                color="primary"
+                size="large"
+                redirect_to="/auth?mode=sign_up"
+                sx={{ display: "block", mx: "auto", mb: 5 }}
+            >
                 Create Your Secret Diary Now!
             </CustomButton>
 
