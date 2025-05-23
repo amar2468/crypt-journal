@@ -3,6 +3,7 @@ import Heading from '../components/Heading';
 import Paragraph from '../components/Paragraph';
 import CustomInputField from '../components/CustomInputField';
 import CustomButton from '../components/CustomButton';
+import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -44,6 +45,8 @@ const Login = ( { mode, switchForms } ) => {
                     startIcon={<ArrowBack />}
 
                     color="primary"
+
+                    redirect_to={-1}
 
                     sx={{ ml: 15, position: "absolute", mt: 5 }}
                 >
@@ -96,7 +99,13 @@ const Login = ( { mode, switchForms } ) => {
                     Sign In
                 </CustomButton>
 
-                <Link href="#" color="primary" align="center" sx={{ mt: 3 }}>
+                <Link
+                    component={RouterLink}
+                    to="/forgot_password"
+                    color="primary"
+                    align="center"   
+                    sx={{ mt: 3 }}
+                >
                     Forgot Your Password?
                 </Link>
 
@@ -110,7 +119,11 @@ const Login = ( { mode, switchForms } ) => {
                         sx={{ mt: 3 }}
                     >
                         Don't have An Account Yet? {' '}
-                        <Link href="#" color="primary">
+                        <Link
+                            component={RouterLink}
+                            to="/auth?mode=sign_up"
+                            color="primary"
+                        >
                             Sign Up Here
                         </Link>
                     </Paragraph>

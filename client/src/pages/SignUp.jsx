@@ -7,6 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import CustomButton from '../components/CustomButton';
 import Footer from '../components/Footer';
+import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -47,6 +48,8 @@ const SignUp = ( { mode, switchForms } ) => {
                     color="primary"
 
                     sx={{ ml: 15, position: "absolute", mt: 5 }}
+
+                    redirect_to={-1}
                 >
 
                     Back
@@ -115,13 +118,21 @@ const SignUp = ( { mode, switchForms } ) => {
                     label={
                         <span>
                             I agree to the {' '}
-                            <Link href="#" color="primary">
-                                Terms of Use
+                            <Link
+                                component={RouterLink}
+                                to="/terms_and_conditions"
+                                color="primary"
+                            >
+                                Terms & Conditions
                             </Link>
                             {' '}
 
                             and {' '}
-                            <Link href="#" color="primary">
+                            <Link
+                                component={RouterLink}
+                                to="/privacy_policy"
+                                color="primary"
+                            >
                                 Privacy Policy
                             </Link>
                         </span>
