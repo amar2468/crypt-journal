@@ -1,12 +1,9 @@
 import Button from '@mui/material/Button';
-import { useNavigate } from 'react-router-dom';
 
-const CustomButton = ({ children, variant, color="", size="", sx={}, startIcon=null, redirect_to="" }) => {
-
-    const navigate = useNavigate();
+const CustomButton = ({ children, variant, color="", size="", sx={}, startIcon=null, onClick={} }) => {
 
     return (
-        <Button variant={variant} color={color} size={size} sx={sx} startIcon={startIcon} onClick={() => navigate(redirect_to)}>
+        <Button variant={variant} color={color} size={size} sx={sx} startIcon={startIcon} onClick={onClick}>
             {children}
         </Button>
     );
