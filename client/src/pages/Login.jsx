@@ -10,8 +10,11 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from '@mui/material/ToggleButton';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ( { mode, switchForms } ) => {
+    const navigate = useNavigate();
+
     return (
         <div>
             <Navbar />
@@ -46,7 +49,7 @@ const Login = ( { mode, switchForms } ) => {
 
                     color="primary"
 
-                    redirect_to={-1}
+                    onClick={() => navigate(-1)}
 
                     sx={{ ml: 15, position: "absolute", mt: 5 }}
                 >

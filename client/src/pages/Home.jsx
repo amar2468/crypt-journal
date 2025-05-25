@@ -12,8 +12,11 @@ import Box from "@mui/material/Box";
 import FeatureDescriptionCard from '../components/FeatureDescriptionCard';
 import CustomerReviewCard from '../components/CustomerReviewCard';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+    const navigate = useNavigate();
+    
     return (
         <div>
             <Navbar />
@@ -38,7 +41,7 @@ const Home = () => {
                 variant="contained"
                 color="primary"
                 size="large"
-                redirect_to="/auth?mode=sign_up"
+                onClick={() => navigate("/auth?mode=sign_up")}
                 sx={{ display: "block", mx: "auto", mb: 5 }}
             >
                 Create Your Secret Diary Now!
