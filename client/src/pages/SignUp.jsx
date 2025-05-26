@@ -26,22 +26,46 @@ const SignUp = ( { mode, switchForms } ) => {
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        agreedToTerms: false
     });
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
+        const isChecked = event.target.checked;
 
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        if (event.target.type === "checkbox") {
+            setFormData({
+                ...formData,
+                [name]: isChecked,
+            });
+        }
+        
+        else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [submitFormSuccessMessage, setSubmitFormSuccessMessage] = useState('');
+
     const handleSubmit = async () => {
+        setErrorMessage('');
+        setSubmitFormSuccessMessage('');
+
+        // If the terms & conditions and the privacy terms were NOT accepted, we will inform the user about it and stop the form submission.
+        if (formData.agreedToTerms === false) {
+            setErrorMessage("You must agree to the terms.")
+
+            return;
+        }
+
+        // If the password entered does not match the re-entered password, the form will not be submitted.
         if (formData.password !== formData.confirmPassword) {
                 
             setErrorMessage("The passwords entered do not match. Make sure the passwords match.")
@@ -49,14 +73,46 @@ const SignUp = ( { mode, switchForms } ) => {
             return;
         }
 
-        try {
-            const res = await axios.post('http://localhost:4000/api/auth/sign_up', formData);
-            console.log(res.data);
-            setErrorMessage('');
+        // Removing leading and trailing spaces from the first name.
+        const trimmedFirstName = formData.firstName.trim();
+
+        // If the first name field is empty, we will stop the form submission.
+        if (!trimmedFirstName) {
+            setErrorMessage("First name cannot be empty! Enter a valid first name.");
+
+            return;
         }
 
+        // If the first name length is lower than 2 or greater than 50, we will stop the form submission.
+        if (trimmedFirstName.length >= 2 && trimmedFirstName.length <= 50) {
+            setErrorMessage("First name needs to be between 2-50 characters long.");
+
+            return;
+        }
+
+        // If the form contains something other than letters, spaces, apostrophes, or hypens, the form will not be submitted.
+        if (!(/^[a-zA-ZÀ-ÿ'-\s]+$/.test(trimmedFirstName))) {
+            setErrorMessage("First name can only contain letters, spaces, apostrophes, or hyphens.");
+
+            return;
+        }
+        
+        // Updating the "first name" form field with the trimmed version of it.
+        setFormData(prev => ({
+            ...prev,
+            firstName: trimmedFirstName
+        }));
+
+        // Attempt to make an API call to the backend "sign_up" route, passing the form data, so that the user can be added to the
+        // table. Success message displayed if the user is added to the table.
+        try {
+            await axios.post('http://localhost:4000/api/auth/sign_up', formData);
+            setSubmitFormSuccessMessage("Your account has been created successfully. Welcome!");
+        }
+
+        // If there was an issue with adding the user record to the table, the error will be presented on the page.
         catch (err) {
-            console.log(err);
+            setErrorMessage("An issue was encountered when creating your account. Please verify that you have filled in the correct information.")
         }
     };
 
@@ -66,6 +122,16 @@ const SignUp = ( { mode, switchForms } ) => {
         errorAlert = (
             <Alert variant="filled" severity="error" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
                 { errorMessage }
+            </Alert>
+        );
+    }
+
+    let successAlert;
+
+    if (submitFormSuccessMessage) {
+        successAlert = (
+            <Alert variant="filled" severity="success" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
+                { submitFormSuccessMessage }
             </Alert>
         );
     }
@@ -133,6 +199,8 @@ const SignUp = ( { mode, switchForms } ) => {
 
             {errorAlert}
 
+            {successAlert}
+
             <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
                 <CustomInputField
                     label="First Name"
@@ -185,7 +253,7 @@ const SignUp = ( { mode, switchForms } ) => {
                 />
 
                 <FormControlLabel
-                    control={<Checkbox />}
+                    control={<Checkbox name="agreedToTerms" value={formData.agreedToTerms} onChange={handleChange} />}
 
                     label={
                         <span>
