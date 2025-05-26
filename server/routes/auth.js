@@ -76,7 +76,11 @@ router.post('/sign_up', async(req, res) => {
     // If an error was encountered when trying to add the user to the table, the error will be displayed in the console.
     catch (err) {
         console.error(err);
+
+        res.status(500).json({ message : 'Server Error.' });
     }
+
+    res.status(201).json({ message : 'User Account Created.' });
 });
 
 module.exports = router;
