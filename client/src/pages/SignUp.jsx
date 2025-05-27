@@ -73,25 +73,28 @@ const SignUp = ( { mode, switchForms } ) => {
             return;
         }
 
-        // Removing leading and trailing spaces from the first name.
+        // Removing leading and trailing spaces from the "first name".
         const trimmedFirstName = formData.firstName.trim();
 
-        // If the first name field is empty, we will stop the form submission.
+        // If the "first name" field is empty, we will stop the form submission.
         if (!trimmedFirstName) {
             setErrorMessage("First name cannot be empty! Enter a valid first name.");
 
             return;
         }
 
-        // If the first name length is lower than 2 or greater than 50, we will stop the form submission.
-        if (trimmedFirstName.length >= 2 && trimmedFirstName.length <= 50) {
+        // If the "first name" length is less than 2 or greater than 50, we will stop the form submission.
+        if (trimmedFirstName.length < 2 || trimmedFirstName.length > 50) {
             setErrorMessage("First name needs to be between 2-50 characters long.");
 
             return;
         }
 
-        // If the form contains something other than letters, spaces, apostrophes, or hypens, the form will not be submitted.
-        if (!(/^[a-zA-ZÀ-ÿ'-\s]+$/.test(trimmedFirstName))) {
+        // Regex which only allows letters, spaces, apostrophes, or hypens
+        const firstNameRegex = /^[a-zA-ZÀ-ÿ'-\s]+$/;
+
+        // If the "first name" contains something other than letters, spaces, apostrophes, or hypens, the form will not be submitted.
+        if (!(firstNameRegex.test(trimmedFirstName))) {
             setErrorMessage("First name can only contain letters, spaces, apostrophes, or hyphens.");
 
             return;
@@ -102,6 +105,92 @@ const SignUp = ( { mode, switchForms } ) => {
             ...prev,
             firstName: trimmedFirstName
         }));
+
+        // Removing leading and trailing spaces from the "last name".
+        const trimmedLastName = formData.lastName.trim();
+
+        // If the "last name" field is empty, we will stop the form submission.
+        if (!(trimmedLastName)) {
+            setErrorMessage("Last name cannot be empty! Enter a valid last name.");
+
+            return;
+        }
+
+        // If the "last name" length is less than 2 or greater than 50, we will stop the form submission.
+        if (trimmedLastName.length < 2 || trimmedLastName.length > 50 ) {
+            setErrorMessage("Last name needs to be between 2-50 characters long.");
+
+            return;
+        }
+
+        // Regex which only allows letters, spaces, apostrophes, or hypens
+        const lastNameRegex = /^[a-zA-ZÀ-ÿ'-\s]+$/;
+
+        // If the "last name" contains something other than letters, spaces, apostrophes, or hypens, the form will not be submitted.
+        if (!(lastNameRegex.test(trimmedLastName))) {
+            setErrorMessage("Last name can only contain letters, spaces, apostrophes, or hyphens.");
+
+            return;
+        }
+
+        // Updating the "last name" form field with the trimmed version of it.
+        setFormData(prev => ({
+            ...prev,
+            lastName: trimmedLastName
+        }));
+
+        // Removing leading and trailing spaces from the "email".
+        const trimmedEmail = formData.email.trim();
+
+        // If the "email" field is empty, we will stop the form submission
+        if (!(trimmedEmail)) {
+            setErrorMessage("Email cannot be empty! Enter a valid email address.");
+
+            return;
+        }
+
+        // Basic email format regex: ensures one "@" and at least one "." after it, with no spaces
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // If the email entered by the user is NOT compliant with the email format, the user will be prompted to enter a valid
+        // email address and the form will not be submitted.
+        if (!(emailRegex.test(trimmedEmail))) {
+            setErrorMessage("Please enter a valid email address.");
+
+            return;
+        }
+
+        // Updating the "email" form field with the trimmed version of it.
+        setFormData(prev => ({
+            ...prev,
+            email: trimmedEmail
+        }));
+
+        // Check if the password is less than 8 characters. If so, don't submit the form and present error message on the page.
+        if ((formData.password).length < 8) {
+            setErrorMessage("The password has to be at least 8 characters long.");
+
+            return;
+        }
+
+        // If the password contains more than 64 characters, the form will not be submitted and an error message will be shown on the page.
+        if ((formData.password).length > 64) {
+            setErrorMessage("The password cannot contain more than 64 characters.");
+
+            return;
+        }
+
+        // Creating a regex which will check if the password contains at least one uppercase letter, one lowercase letter, one number,
+        // and one special character.
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/;
+
+        // If the password is not compliant with this regex, the form will not be submitted and an error will be presented on the page
+        // displayed on the screen.
+        if (!(passwordRegex.test(formData.password))) {
+            setErrorMessage("The password needs to contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+
+            return;
+        }
 
         // Attempt to make an API call to the backend "sign_up" route, passing the form data, so that the user can be added to the
         // table. Success message displayed if the user is added to the table.
