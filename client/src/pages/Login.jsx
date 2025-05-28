@@ -11,9 +11,37 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import axios from 'axios';
 
 const Login = ( { mode, switchForms } ) => {
     const navigate = useNavigate();
+
+    const [loginFormData, setLoginFormData] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+
+        setLoginFormData({
+            ...loginFormData,
+            [name]: value,
+        });
+    };
+
+    const handleSubmit = async () => {
+        try {
+            const res = await axios.post('http://localhost:4000/api/auth/login', loginFormData);
+            console.log(res);
+        }
+
+        catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <div>
@@ -49,9 +77,9 @@ const Login = ( { mode, switchForms } ) => {
 
                     color="primary"
 
-                    onClick={() => navigate(-1)}
-
                     sx={{ ml: 15, position: "absolute", mt: 5 }}
+
+                    onClick={() => navigate(-1)}
                 >
                     Back
                 </CustomButton>
@@ -85,6 +113,12 @@ const Login = ( { mode, switchForms } ) => {
 
                     type="email"
 
+                    name="email"
+
+                    value={loginFormData.email}
+
+                    onChange={handleChange}
+
                     sx={{ mt: 3 }}
                 />
 
@@ -95,10 +129,22 @@ const Login = ( { mode, switchForms } ) => {
 
                     type="password"
 
+                    name="password"
+
+                    value={loginFormData.password}
+
+                    onChange={handleChange}
+
                     sx={{ mt: 3 }}
                 />
 
-                <CustomButton variant="contained" color="primary" size="large" sx={{ mt: 3 }}>
+                <CustomButton
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    sx={{ mt: 3 }}
+                    onClick={handleSubmit}
+                >
                     Sign In
                 </CustomButton>
 
