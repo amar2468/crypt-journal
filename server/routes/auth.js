@@ -83,4 +83,8 @@ router.post('/sign_up', async(req, res) => {
     res.status(201).json({ message : 'User Account Created.' });
 });
 
+router.post('/login', async(req, res) => {
+    res.status(201).json({ message: 'Login was successful.' });
+});
+
 module.exports = router;
