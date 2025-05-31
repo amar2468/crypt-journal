@@ -84,7 +84,35 @@ router.post('/sign_up', async(req, res) => {
 });
 
 router.post('/login', async(req, res) => {
-    res.status(201).json({ message: 'Login was successful.' });
+    // Extracting the email and password from the login form
+    const { email, password } = req.body;
+
+    // Query the database to find the first user with the specified email.
+    const result = await db.query("SELECT * from users where email=$1 LIMIT 1;", [email]);
+
+    // If a record was found for the specified user in the database, we will see if the passwords match.
+    if (result.rowCount > 0) {
+        // Retrieving the user's hashed password from the database.
+        const hashedPassword = result.rows[0].password;
+
+        // Comparing the password that the user entered against the hashed password in the database.
+        const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+
+        // If the passwords match, the login was successful, so send this information back to the front-end.
+        if (passwordsMatch) {
+            res.status(201).json({ message: 'Login was successful.' });
+        }
+
+        // If the passwords don't match, send this information back to the front-end.
+        else {
+            res.status(401).json({ message: 'Invalid email or password.' });
+        }
+    }
+
+    // If the email address doesn't exist in the database, inform the user that there was an issue with signing in.
+    else {
+        res.status(401).json({ message: 'Invalid email or password.' });
+    }
 });
 
 module.exports = router;
