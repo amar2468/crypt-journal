@@ -14,7 +14,9 @@ const Navbar = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Crypt Journal
+                        <Button color="inherit" onClick={() => navigate('/')}>
+                            Crypt Journal
+                        </Button>
                     </Typography>
 
                     <Button color="inherit">
