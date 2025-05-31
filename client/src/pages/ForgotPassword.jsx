@@ -6,6 +6,8 @@ import CustomInputField from '../components/CustomInputField';
 import CustomButton from '../components/CustomButton';
 import Footer from '../components/Footer';
 import { useState } from 'react';
+import Alert from '@mui/material/Alert';
+import axios from 'axios';
 
 const ForgotPassword = () => {
 
@@ -63,7 +65,52 @@ const ForgotPassword = () => {
             ...prev,
             userEmail: trimmedEmail,
         }));
+
+        // Attempt to make an API call to the backend "forgot password" route, passing the form data.
+        // If successful, present the success message on the page.
+        try {
+            const res = await axios.post('http://localhost:4000/api/auth/forgot_password', forgotPasswordForm);
+
+            if (res.status === 201) {
+                setSuccessMessage(res.data.message);
+                return;
+            }
+        }
+
+        // If there was an issue with the submission of the "forgot password" form, the error will be presented on the page.
+        catch (err) {
+            
+            // If the server returns a 401 error, we will display that error message on the page.
+            if (err.response && err.response.status === 401) {
+                setErrorMessage(err.response.data.message);
+                return;
+            }
+
+            console.error(err);
+        }
     };
+
+    let errorAlert;
+
+    // If an error message was detected, it will be displayed in the form of an alert message.
+    if (errorMessage) {
+        errorAlert = (
+            <Alert variant="filled" severity="error" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
+                { errorMessage }
+            </Alert>
+        );
+    }
+
+    let successAlert;
+
+    // If a success message was detected, it will be displayed in the form of an alert message.
+    if (successMessage) {
+        successAlert = (
+            <Alert variant="filled" severity="success" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
+                { successMessage }
+            </Alert>
+        );
+    }
 
     return (
         <div>
@@ -88,6 +135,9 @@ const ForgotPassword = () => {
             >
                 Enter your email address below, so that we can send the password reset link to it.
             </Paragraph>
+
+            {errorAlert}
+            {successAlert}
 
             <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
                 <CustomInputField
