@@ -77,12 +77,14 @@ router.post('/sign_up', async(req, res) => {
     catch (err) {
         console.error(err);
 
-        res.status(500).json({ message : 'Server Error.' });
+        return res.status(500).json({ message : 'Server Error.' });
     }
 
-    res.status(201).json({ message : 'User Account Created.' });
+    return res.status(201).json({ message : 'User Account Created.' });
 });
 
+// Handles user login by verifying the email exists and the provided password matches the stored hashed password,
+// responding with success or error accordingly.
 router.post('/login', async(req, res) => {
     // Extracting the email and password from the login form
     const { email, password } = req.body;
@@ -100,18 +102,34 @@ router.post('/login', async(req, res) => {
 
         // If the passwords match, the login was successful, so send this information back to the front-end.
         if (passwordsMatch) {
-            res.status(201).json({ message: 'Login was successful.' });
+            return res.status(201).json({ message: 'Login was successful.' });
         }
 
         // If the passwords don't match, send this information back to the front-end.
         else {
-            res.status(401).json({ message: 'Invalid email or password.' });
+            return res.status(401).json({ message: 'Invalid email or password.' });
         }
     }
 
     // If the email address doesn't exist in the database, inform the user that there was an issue with signing in.
     else {
-        res.status(401).json({ message: 'Invalid email or password.' });
+        return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+});
+
+// Handles POST requests to initiate password reset by checking if the email exists and responding with success or error accordingly.
+router.post('/forgot_password', async(req, res) => {
+    const { userEmail } = req.body;
+
+    const result = await db.query("SELECT * from users where email=$1 LIMIT 1", [userEmail]);
+
+    // If a record was found for the specified user in the database, we will send an email with the password reset link.
+    if (result.rowCount > 0) {
+        return res.status(201).json({ message: 'Password reset link sent.' });
+    }
+    
+    else {
+        return res.status(401).json({ message: 'No account with that email address was found in our system.' });
     }
 });
 
