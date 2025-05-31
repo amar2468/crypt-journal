@@ -13,15 +13,18 @@ import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
+import Alert from '@mui/material/Alert';
 
 const Login = ( { mode, switchForms } ) => {
     const navigate = useNavigate();
 
+    // State object that will hold the values of the "email" and "password" fields in the "login" form.
     const [loginFormData, setLoginFormData] = useState({
         email: '',
         password: ''
     });
-
+    
+    // Function that will update the values in the state object for the "email" and "password" fields.
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -32,16 +35,101 @@ const Login = ( { mode, switchForms } ) => {
         });
     };
 
+    // State variable that will store the error message, when the form is submitted.
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // State variable that will store the success message, when the form is submitted.
+    const [successMessage, setSuccessMessage] = useState('');
+
+    // Function which will check the input from the sign in form and make an API request to the backend, passing the form fields.
     const handleSubmit = async () => {
-        try {
-            const res = await axios.post('http://localhost:4000/api/auth/login', loginFormData);
-            console.log(res);
+        // Resetting the error messages and success messages, every time the form is submitted.
+        setErrorMessage("");
+        setSuccessMessage("");
+
+        // Removing leading and trailing spaces from the "email".
+        const formattedEmail = loginFormData.email.trim();
+
+        // If the email is empty, an error message will be on the page and the form will not be submitted.
+        if (!(formattedEmail)) {
+            setErrorMessage("Email cannot be empty! Enter a valid email.");
+            return;
         }
 
+        // Basic email format regex: ensures one "@" and at least one "." after it, with no spaces
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // If the email entered by the user is NOT compliant with the email format, the user will be prompted to enter a valid
+        // email address and the form will not be submitted.
+        if (!(emailRegex.test(formattedEmail))) {
+            setErrorMessage("Please enter a valid email address.");
+            return;
+        }
+
+        // Updating the "email" form field with the trimmed version of it.
+        setLoginFormData(prev => ({
+            ...prev,
+            email: formattedEmail,
+        }));
+
+        // If the password is empty, an error message will be on the page and the form will not be submitted.
+        if (loginFormData.password === "") {
+            setErrorMessage("Password cannot be empty! Enter a valid password.");
+            return;
+        }
+
+        // Attempt to make an API call to the backend "login" route, passing the form data. If successful, present the success
+        // message on the page.
+        try {
+            // Making a "POST" API request to "login" route, passing the form data.
+            const res = await axios.post('http://localhost:4000/api/auth/login', loginFormData);
+            
+            // If the server returns a 201 response, display the success message on the page.
+            if (res && res.status === 201) {
+                console.log(res.data.message);
+                setSuccessMessage(res.data.message);
+                return;
+            }
+        }
+
+        // If there was an issue with signing in, the error will be presented on the page.
         catch (err) {
-            console.error(err);
+            // If the server returns a 401 error, we will display that error message on the page.
+            if (err.response && err.response.status === 401) {
+                setErrorMessage(err.response.data.message);
+                return;
+            }
+
+            // If the server returns a different error code, display a generic error message on the page.
+            else {
+                console.error(err);
+                setErrorMessage("Invalid email or password. Please try again.");
+                return;
+            }
         }
     };
+
+    let errorAlert;
+
+    // If an error message was detected, it will be displayed in the form of an alert message.
+    if (errorMessage) {
+        errorAlert = (
+            <Alert variant="filled" severity="error" sx={{ width: '50%', margin: '0 auto', mt: 5 }}>
+                { errorMessage }
+            </Alert>
+        );
+    }
+
+    let successAlert;
+
+    // If a success message was detected, it will be displayed in the form of an alert message.
+    if (successMessage) {
+        successAlert = (
+            <Alert variant="filled" severity="success" sx={{ width:'50%', margin: '0 auto', mt: 5 }}>
+                { successMessage }
+            </Alert>
+        );
+    }
 
     return (
         <div>
@@ -104,6 +192,9 @@ const Login = ( { mode, switchForms } ) => {
             >
                 Fill in the fields below to sign into your account.
             </Paragraph>
+
+            { errorAlert }
+            { successAlert }
 
             <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
                 <CustomInputField
