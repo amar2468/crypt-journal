@@ -86,7 +86,6 @@ const Login = ( { mode, switchForms } ) => {
             
             // If the server returns a 201 response, display the success message on the page.
             if (res && res.status === 201) {
-                console.log(res.data.message);
                 setSuccessMessage(res.data.message);
                 return;
             }
