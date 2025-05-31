@@ -36,17 +36,17 @@ const SignUp = ( { mode, switchForms } ) => {
         const isChecked = event.target.checked;
 
         if (event.target.type === "checkbox") {
-            setFormData({
-                ...formData,
+            setFormData(prev => ({
+                ...prev,
                 [name]: isChecked,
-            });
+            }));
         }
         
         else {
-            setFormData({
-                ...formData,
+            setFormData(prev => ({
+                ...prev,
                 [name]: value,
-            });
+            }));
         }
     };
 

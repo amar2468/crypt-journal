@@ -29,10 +29,10 @@ const Login = ( { mode, switchForms } ) => {
         const name = event.target.name;
         const value = event.target.value;
 
-        setLoginFormData({
-            ...loginFormData,
+        setLoginFormData(prev => ({
+            ...prev,
             [name]: value,
-        });
+        }));
     };
 
     // State variable that will store the error message, when the form is submitted.
