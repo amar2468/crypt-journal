@@ -16,7 +16,9 @@ const createTables = async () => {
                 phone_number TEXT,
                 mfa_enabled BOOLEAN DEFAULT false,
                 failed_login_attempts INTEGER DEFAULT 0,
-                lockout_until TIMESTAMP
+                lockout_until TIMESTAMP,
+                reset_password_token VARCHAR(64),
+                reset_password_expires TIMESTAMP
             );
         `);
 
