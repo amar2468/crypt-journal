@@ -17,7 +17,15 @@ async function sendPasswordResetEmail(recipientEmail) {
         from: '"Crypt Journal" <no-reply@cryptjournal.com>',
         to: recipientEmail,
         subject: 'Reset your password',
-        text: 'Test email',
+        html: `
+            <p>Hi</p>
+            <br />
+            <p>To reset your password, please click on the link and fill in the form.</p>
+            <br />
+            <p>If you do not want to change your password, ignore this email.</p>
+            <br />
+            <p>Thanks, Crypt Journal Team</p>
+        `,
     });
 
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(email_info));
