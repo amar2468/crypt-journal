@@ -4,6 +4,8 @@ const router = express.Router();
 
 const bcrypt = require('bcrypt');
 
+const { sendPasswordResetEmail } = require('../sendEmail');
+
 // Importing the DB connection
 const db = require('../db')
 
@@ -125,6 +127,8 @@ router.post('/forgot_password', async(req, res) => {
 
     // If a record was found for the specified user in the database, we will send an email with the password reset link.
     if (result.rowCount > 0) {
+        await sendPasswordResetEmail(userEmail);
+
         return res.status(201).json({ message: 'Password reset link sent.' });
     }
     
