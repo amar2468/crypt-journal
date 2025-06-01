@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 
 const { sendPasswordResetEmail } = require('../sendEmail');
 
+const crypto = require('crypto');
+
 // Importing the DB connection
 const db = require('../db')
 
@@ -127,6 +129,14 @@ router.post('/forgot_password', async(req, res) => {
 
     // If a record was found for the specified user in the database, we will send an email with the password reset link.
     if (result.rowCount > 0) {
+        const token = crypto.randomBytes(32).toString("hex");
+
+        const token_expires = new Date(Date.now() + 15 * 60 * 1000);
+
+        await db.query(
+            "UPDATE users SET reset_password_token=$1, reset_password_expires=$2 WHERE email=$3", [token, token_expires, userEmail]
+        );
+
         await sendPasswordResetEmail(userEmail);
 
         return res.status(201).json({ message: 'Password reset link sent.' });
