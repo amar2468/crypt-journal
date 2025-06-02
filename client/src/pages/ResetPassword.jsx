@@ -35,17 +35,7 @@ const ResetPassword = () => {
                 There must be at least one uppercase letter, one lowercase letter, one number, and one special character.
             </Paragraph>
 
-            <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
-                <CustomInputField
-                    label="Email"
-
-                    variant="outlined"
-
-                    type="email"
-
-                    sx={{ mt: 3 }}
-                />
-                
+            <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>               
                 <CustomInputField
                     label="New Password"
 
