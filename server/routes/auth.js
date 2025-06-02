@@ -137,7 +137,9 @@ router.post('/forgot_password', async(req, res) => {
             "UPDATE users SET reset_password_token=$1, reset_password_expires=$2 WHERE email=$3", [token, token_expires, userEmail]
         );
 
-        await sendPasswordResetEmail(userEmail);
+        const password_reset_link = "http://localhost:3000/reset_password/" + token;
+
+        await sendPasswordResetEmail(userEmail, password_reset_link);
 
         return res.status(201).json({ message: 'Password reset link sent.' });
     }
