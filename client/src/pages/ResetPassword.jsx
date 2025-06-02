@@ -10,7 +10,24 @@ import { useParams } from "react-router-dom";
 const ResetPassword = () => {
     const { token } = useParams();
 
-    console.log(token);
+    // State object that will hold the values of the "new_password", "confirm_new_password", and "token" fields from the form below.
+    const [resetPassword, setResetPassword] = useState({
+        new_password: '',
+        confirm_new_password: '',
+        token: token
+    });
+
+    // Function that will update the values in the state object for the "new_password" and "confirm_new_password" fields.
+    const handleChange = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        
+        setResetPassword(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
 
     return (
         <div>
@@ -43,6 +60,12 @@ const ResetPassword = () => {
 
                     type="password"
 
+                    name="new_password"
+
+                    value={resetPassword.new_password}
+
+                    onChange={handleChange}
+
                     sx={{ mt: 3 }}
                 />
 
@@ -53,13 +76,22 @@ const ResetPassword = () => {
 
                     type="password"
 
+                    name="confirm_new_password"
+
+                    value={resetPassword.confirm_new_password}
+
+                    onChange={handleChange}
+
                     sx={{ mt: 3 }}
                 />
 
                 <CustomButton
                     variant="contained"
+
                     color="primary"
+
                     size="large"
+
                     sx={{ mt: 3 }}
                 >
                     Reset Password
