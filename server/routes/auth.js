@@ -149,4 +149,79 @@ router.post('/forgot_password', async(req, res) => {
     }
 });
 
+router.post('/change_password', async(req, res) => {
+    // Extracting the form data that was submitted and saving them in separate variables.
+    const { new_password, confirm_new_password, token } = req.body;
+
+    if (new_password !== confirm_new_password) {
+        return res.status(400).json({ message: 'The passwords do not match. Make sure that the passwords match.' });
+    }
+
+    // Check if the password is less than 8 characters.
+    if (new_password.length < 8) {
+        return res.status(400).json({ message: 'The password has to be at least 8 characters long.' });
+    }
+
+    // Check if the password is more than 64 characters
+    if ((new_password).length > 64) {
+        return res.status(400).json({ message: 'The password cannot contain more than 64 characters.' });
+    }
+
+    // Creating a regex which will check if the password contains at least one uppercase letter, one lowercase letter, one number,
+    // and one special character.
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/;
+
+    // If the password is not compliant with this regex, the form will not be submitted and an error will be presented on the page
+    // displayed on the screen.
+    if (!(passwordRegex.test(new_password))) {
+        return res.status(400).json({ message: 'The password needs to contain at least one uppercase letter, one lowercase letter, one number, and one special character.' });
+    }
+
+    // Retrieving the user who has the token that is in the password reset URL
+    const result = await db.query("SELECT * from users where reset_password_token=$1", [token]);
+
+    // If a user with that specific token exists, we will attempt to update the password.
+    if (result.rowCount > 0) {
+        // Retrieving the user's token expiry date, so we can see if it is still valid.
+        const token_expiry_date = result.rows[0].reset_password_expires;
+
+        // If the token has expired, we will inform the user that the password reset token is invalid.
+        if (token_expiry_date < new Date()) {
+            return res.status(400).json({ message: "Invalid password reset token." });
+        }
+
+        // If the token is still valid, we will hash the password and attempt to update the password.
+        else {
+            // Hash the password and attempt to update it.
+            try {
+                // Hash the password using bcrypt with a salt rounds value of 10
+                const hashedPassword = await bcrypt.hash(new_password, 10);
+
+                // Run the query to update the user password, using the user's token as the unique identifier.
+                await db.query(
+                    "UPDATE users SET password=$1 WHERE reset_password_token=$2",
+                    [hashedPassword, token]
+                );
+
+                // Return the success message to the user.
+                return res.status(201).json({ message: "Password has been successfully updated." });
+            }
+
+            // If there was an issue with updating the password, we will return the error message to the user.
+            catch (err) {
+                // Logging the error message to the console.
+                console.log(err);
+
+                // Return the error message to the user.
+                return res.status(500).json({ message: "An error occurred while updating the password." });
+            }
+        }
+    }
+
+    // If there are no users with that token, we will inform the user that the password reset token is invalid.
+    else {
+        return res.status(400).json({ message: "Invalid password reset token." });
+    }
+});
+
 module.exports = router;
