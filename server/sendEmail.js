@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-async function sendPasswordResetEmail(recipientEmail) {
+async function sendPasswordResetEmail(recipientEmail, password_reset_link) {
     let userAccount = await nodemailer.createTestAccount();
 
     let transporter = nodemailer.createTransport({
@@ -20,7 +20,7 @@ async function sendPasswordResetEmail(recipientEmail) {
         html: `
             <p>Hi</p>
             <br />
-            <p>To reset your password, please click on the link and fill in the form.</p>
+            <p>To reset your password, please click on the link <a href="${password_reset_link}">here</a> and fill in the form.</p>
             <br />
             <p>If you do not want to change your password, ignore this email.</p>
             <br />
