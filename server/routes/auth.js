@@ -18,7 +18,7 @@ router.post('/sign_up', async(req, res) => {
 
     // Compare the original password with the re-entered one to ensure they match
     if (password !== confirmPassword) {
-        console.log("Passwords don't match.");
+        return res.status(400).json({ message: 'The passwords do not match. Make sure that the passwords match.' });
     }
 
     // Hash the user's password using bcrypt with a salt rounds value of 10
