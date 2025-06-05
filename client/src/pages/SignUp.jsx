@@ -195,18 +195,34 @@ const SignUp = ( { mode, switchForms } ) => {
         // Attempt to make an API call to the backend "sign_up" route, passing the form data, so that the user can be added to the
         // table. Success message displayed if the user is added to the table.
         try {
-            await axios.post('http://localhost:4000/api/auth/sign_up', formData);
-            setSubmitFormSuccessMessage("Your account has been created successfully. Welcome!");
+            const res = await axios.post('http://localhost:4000/api/auth/sign_up', formData);
+            
+            // If the server returns a 201 response, display the success message on the page.
+            if (res && res.status === 201) {
+                setSubmitFormSuccessMessage("Your account has been created successfully. Welcome!");
+                return;
+            }
         }
 
         // If there was an issue with adding the user record to the table, the error will be presented on the page.
         catch (err) {
-            setErrorMessage("An issue was encountered when creating your account. Please verify that you have filled in the correct information.")
+            // If the server returns a 400 error, we will display that error message on the page.
+            if (err.response && err.response.status === 400) {
+                setErrorMessage(err.response.data.message);
+                return;
+            }
+
+            // If the server returns a 500 error, we will display that error message on the page.
+            else if (err.response && err.response.status === 500) {
+                setErrorMessage(err.response.data.message);
+                return;
+            }
         }
     };
 
     let errorAlert;
 
+    // If an error message was detected, it will be displayed in the form of an alert message.
     if(errorMessage) {
         errorAlert = (
             <Alert variant="filled" severity="error" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
@@ -217,6 +233,7 @@ const SignUp = ( { mode, switchForms } ) => {
 
     let successAlert;
 
+    // If a success message was detected, it will be displayed in the form of an alert message.
     if (submitFormSuccessMessage) {
         successAlert = (
             <Alert variant="filled" severity="success" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
