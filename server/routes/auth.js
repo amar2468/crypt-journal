@@ -70,6 +70,8 @@ router.post('/sign_up', authenticateToken, async(req, res) => {
                 ) VALUES (
                     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
                 )
+
+                RETURNING id, email
             `;
 
             // Adding the variables that hold the actual user values into an array, which will then be passed to the query above.
@@ -87,7 +89,26 @@ router.post('/sign_up', authenticateToken, async(req, res) => {
             ];
 
             // Execute the SQL query to insert the new user into the database
-            await db.query(addUser, values);
+            const result = await db.query(addUser, values);
+
+            // If the account was successfully created, we want to automatically "sign in" the user.
+            // We need to create a JWT token to do so.
+            const token = jwt.sign(
+                { userId: result.rows[0].id, email: result.rows[0].email },
+                SECRET_KEY_JWT,
+                { expiresIn: "1h" }
+            );
+
+            // Returning the "User Account Created" message, along with the token and user info, so that we can make sure that the user
+            // is logged in.
+            return res.status(201).json({
+                message : 'User Account Created.',
+                token: token,
+                user: {
+                    id: result.rows[0].id,
+                    email: result.rows[0].email
+                }
+            });
         }
 
         // If an error was encountered when trying to add the user to the table, the error will be displayed in the console.
@@ -96,8 +117,6 @@ router.post('/sign_up', authenticateToken, async(req, res) => {
 
             return res.status(500).json({ message : 'Server Error.' });
         }
-
-        return res.status(201).json({ message : 'User Account Created.' });
     }
 
     // If the user is logged in, but they want to access this route via a POST request, we need to stop them and inform that they

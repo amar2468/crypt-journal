@@ -209,6 +209,9 @@ const SignUp = ( { mode, switchForms } ) => {
             // If the server returns a 201 response, display the success message on the page.
             if (res && res.status === 201) {
                 setSubmitFormSuccessMessage("Your account has been created successfully. Welcome!");
+
+                localStorage.setItem("token", res.data.token);
+
                 return;
             }
         }
