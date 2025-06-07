@@ -14,9 +14,19 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
+import { useEffect } from 'react';
 
 const Login = ( { mode, switchForms } ) => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            navigate("/");
+        }
+        
+    });
 
     // State object that will hold the values of the "email" and "password" fields in the "login" form.
     const [loginFormData, setLoginFormData] = useState({
@@ -87,12 +97,21 @@ const Login = ( { mode, switchForms } ) => {
             // If the server returns a 201 response, display the success message on the page.
             if (res && res.status === 201) {
                 setSuccessMessage(res.data.message);
+
+                localStorage.setItem("token", res.data.token);
+
                 return;
             }
         }
 
         // If there was an issue with signing in, the error will be presented on the page.
         catch (err) {
+            // If the server returns a 400 error, we will display that error message on the page.
+            if (err.response && err.response.status === 400) {
+                setErrorMessage(err.response.data.message);
+                return;
+            } 
+
             // If the server returns a 401 error, we will display that error message on the page.
             if (err.response && err.response.status === 401) {
                 setErrorMessage(err.response.data.message);

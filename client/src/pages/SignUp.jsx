@@ -13,6 +13,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from '@mui/material/ToggleButton';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
@@ -20,6 +21,14 @@ import Alert from '@mui/material/Alert';
 
 const SignUp = ( { mode, switchForms } ) => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            navigate("/");
+        }
+    });
 
     const [formData, setFormData] = useState({
         firstName: '',

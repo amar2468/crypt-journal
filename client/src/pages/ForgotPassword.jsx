@@ -6,10 +6,22 @@ import CustomInputField from '../components/CustomInputField';
 import CustomButton from '../components/CustomButton';
 import Footer from '../components/Footer';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
 const ForgotPassword = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            navigate("/");
+        }
+
+    });
 
     // State object that stores the form field values (email) from the forgot password form.
     const [forgotPasswordForm, setForgotPasswordForm] = useState({
@@ -79,7 +91,12 @@ const ForgotPassword = () => {
 
         // If there was an issue with the submission of the "forgot password" form, the error will be presented on the page.
         catch (err) {
-            
+            // If the server returns a 400 error, we will display that error message on the page.
+            if (err.response && err.response.status === 400) {
+                setErrorMessage(err.response.data.message);
+                return;
+            }
+
             // If the server returns a 401 error, we will display that error message on the page.
             if (err.response && err.response.status === 401) {
                 setErrorMessage(err.response.data.message);

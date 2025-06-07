@@ -8,10 +8,22 @@ import Footer from "../components/Footer";
 import Alert from '@mui/material/Alert';
 import { useParams } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import axios from "axios";
 
 const ResetPassword = () => {
     const { token } = useParams();
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const logged_in = localStorage.getItem("token");
+
+        if (logged_in) {
+            navigate("/");
+        }
+    });
 
     // State object that will hold the values of the "new_password", "confirm_new_password", and "token" fields from the form below.
     const [resetPasswordForm, setResetPasswordForm] = useState({
