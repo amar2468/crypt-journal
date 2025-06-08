@@ -22,14 +22,11 @@ import Alert from '@mui/material/Alert';
 const SignUp = ( { mode, switchForms } ) => {
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
+    // State variable which tracks whether the token check was completed, eliminating the issue of the page flashing up before the
+    // token check is done
+    const [authChecked, setAuthChecked] = useState(false);
 
-        if (token) {
-            navigate("/");
-        }
-    });
-
+    // State object that will hold the values from the "sign up" form.
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -38,6 +35,31 @@ const SignUp = ( { mode, switchForms } ) => {
         confirmPassword: '',
         agreedToTerms: false
     });
+
+    // State variable that will store the error message, when the form is submitted.
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // State variable that will store the success message, when the form is submitted.
+    const [submitFormSuccessMessage, setSubmitFormSuccessMessage] = useState('');
+
+    // Checking whether the token is present - if it is there, it means that the user is logged in, so they should be redirected
+    // away from the page. If there is no token, we will set the auth check to true, meaning that the page can be safely displayed.
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            navigate("/");
+        }
+
+        else {
+            setAuthChecked(true);
+        }
+    }, [navigate]);
+
+    // If the token check indicates that there is no token, we will not allow the displaying of the page.
+    if (!authChecked) {
+        return null;
+    }
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -58,10 +80,6 @@ const SignUp = ( { mode, switchForms } ) => {
             }));
         }
     };
-
-    const [errorMessage, setErrorMessage] = useState('');
-
-    const [submitFormSuccessMessage, setSubmitFormSuccessMessage] = useState('');
 
     const handleSubmit = async () => {
         setErrorMessage('');

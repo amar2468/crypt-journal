@@ -14,6 +14,23 @@ import axios from 'axios';
 const ForgotPassword = () => {
     const navigate = useNavigate();
 
+    // State variable which tracks whether the token check was completed, eliminating the issue of the page flashing up before the
+    // token check is done
+    const [authChecked, setAuthChecked] = useState(false);
+
+    // State object that stores the form field values (email) from the forgot password form.
+    const [forgotPasswordForm, setForgotPasswordForm] = useState({
+        userEmail: ''
+    });
+
+    // State variable that will store the error message, when the form is submitted.
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // State variable that will store the success message, when the form is submitted.
+    const [successMessage, setSuccessMessage] = useState('');
+
+    // Checking whether the token is present - if it is there, it means that the user is logged in, so they should be redirected
+    // away from the page. If there is no token, we will set the auth check to true, meaning that the page can be safely displayed.
     useEffect(() => {
         const token = localStorage.getItem("token");
 
@@ -21,12 +38,16 @@ const ForgotPassword = () => {
             navigate("/");
         }
 
-    });
+        else {
+            setAuthChecked(true);
+        }
 
-    // State object that stores the form field values (email) from the forgot password form.
-    const [forgotPasswordForm, setForgotPasswordForm] = useState({
-        userEmail: ''
-    });
+    }, [navigate]);
+
+    // If the token check indicates that there is no token, we will not allow the displaying of the page.
+    if (!authChecked) {
+        return null;
+    }
 
     // Function that will populate the state object variables with the up-to-date values that the user enters from the input fields.
     const handleChange = (event) => {
@@ -40,12 +61,6 @@ const ForgotPassword = () => {
             [name]: value,
         }));
     };
-
-    // State variable that will store the error message, when the form is submitted.
-    const [errorMessage, setErrorMessage] = useState('');
-
-    // State variable that will store the success message, when the form is submitted.
-    const [successMessage, setSuccessMessage] = useState('');
 
     // Function which will check the input from the forgot password form & make an API request to the backend, passing the form fields.
     const handleSubmit = async() => {

@@ -19,20 +19,41 @@ import { useEffect } from 'react';
 const Login = ( { mode, switchForms } ) => {
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        if (token) {
-            navigate("/");
-        }
-        
-    });
+    // State variable which tracks whether the token check was completed, eliminating the issue of the page flashing up before the
+    // token check is done
+    const [authChecked, setAuthChecked] = useState(false);
 
     // State object that will hold the values of the "email" and "password" fields in the "login" form.
     const [loginFormData, setLoginFormData] = useState({
         email: '',
         password: ''
     });
+
+    // State variable that will store the error message, when the form is submitted.
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // State variable that will store the success message, when the form is submitted.
+    const [successMessage, setSuccessMessage] = useState('');
+
+    // Checking whether the token is present - if it is there, it means that the user is logged in, so they should be redirected
+    // away from the page. If there is no token, we will set the auth check to true, meaning that the page can be safely displayed.
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            navigate("/");
+        }
+
+        else {
+            setAuthChecked(true);
+        }
+        
+    }, [navigate]);
+
+    // If the token check indicates that there is no token, we will not allow the displaying of the page.
+    if (!authChecked) {
+        return null;
+    }
     
     // Function that will update the values in the state object for the "email" and "password" fields.
     const handleChange = (event) => {
@@ -44,12 +65,6 @@ const Login = ( { mode, switchForms } ) => {
             [name]: value,
         }));
     };
-
-    // State variable that will store the error message, when the form is submitted.
-    const [errorMessage, setErrorMessage] = useState('');
-
-    // State variable that will store the success message, when the form is submitted.
-    const [successMessage, setSuccessMessage] = useState('');
 
     // Function which will check the input from the sign in form and make an API request to the backend, passing the form fields.
     const handleSubmit = async () => {

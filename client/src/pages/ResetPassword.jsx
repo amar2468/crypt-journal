@@ -17,13 +17,13 @@ const ResetPassword = () => {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const logged_in = localStorage.getItem("token");
+    const [authChecked, setAuthChecked] = useState(false);
 
-        if (logged_in) {
-            navigate("/");
-        }
-    });
+    // State variable that will store the error message, when the form is submitted.
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // State variable that will store the success message, when the form is submitted.
+    const [successMessage, setSuccessMessage] = useState('');
 
     // State object that will hold the values of the "new_password", "confirm_new_password", and "token" fields from the form below.
     const [resetPasswordForm, setResetPasswordForm] = useState({
@@ -31,6 +31,25 @@ const ResetPassword = () => {
         confirm_new_password: '',
         token: token
     });
+
+    // Checking whether the token is present - if it is there, it means that the user is logged in, so they should be redirected
+    // away from the page. If there is no token, we will set the auth check to true, meaning that the page can be safely displayed.
+    useEffect(() => {
+        const logged_in = localStorage.getItem("token");
+
+        if (logged_in) {
+            navigate("/");
+        }
+
+        else {
+            setAuthChecked(true);
+        }
+    }, [navigate]);
+
+    // If the token check indicates that there is no token, we will not allow the displaying of the page.
+    if (!authChecked) {
+        return null;
+    }
 
     // Function that will update the values in the state object for the "new_password" and "confirm_new_password" fields.
     const handleChange = (event) => {
@@ -42,12 +61,6 @@ const ResetPassword = () => {
             [name]: value,
         }));
     };
-
-    // State variable that will store the error message, when the form is submitted.
-    const [errorMessage, setErrorMessage] = useState('');
-
-    // State variable that will store the success message, when the form is submitted.
-    const [successMessage, setSuccessMessage] = useState('');
 
     // Function which will check the input from the password reset form & make an API request to the backend, passing the form fields.
     const handleSubmit = async () => {
