@@ -13,6 +13,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ResetPassword from './pages/ResetPassword';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/terms_and_conditions" element={<TermsAndConditions />} />
         <Route path="/privacy_policy" element={<PrivacyPolicy />} />
         <Route path="/reset_password/:token" element={<ResetPassword />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );
