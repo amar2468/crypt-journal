@@ -166,7 +166,7 @@ const ResetPassword = () => {
 
                 align="center"
 
-                sx={{ mt: 5 }}
+                sx={{ mt: 15 }}
             />
 
             <Paragraph

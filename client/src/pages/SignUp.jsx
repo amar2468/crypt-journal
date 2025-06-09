@@ -276,7 +276,7 @@ const SignUp = ( { mode, switchForms } ) => {
         <div>
             <Navbar />
 
-            <Box display="flex" justifyContent="center" sx={{ mt: 5 }}>
+            <Box display="flex" justifyContent="center" sx={{ mt: 15 }}>
                 <ToggleButtonGroup
                     value={mode}
 
