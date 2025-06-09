@@ -2,11 +2,18 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import HomeIcon from '@mui/icons-material/Home';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -26,37 +33,62 @@ const Navbar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="fixed" color="transparent" sx={{ backgroundColor: "#FAF9F6" }}>
                 <Toolbar>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        <Button color="inherit" onClick={() => navigate('/')}>
-                            Crypt Journal
-                        </Button>
-                    </Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Tooltip title="Home">
+                            <Button color="inherit" onClick={() => navigate('/')}>
+                                <HomeIcon />
+                            </Button>
+                        </Tooltip>
+                    </Box>
 
-                    <Button color="inherit">
-                        Customer Support
-                    </Button>
+                    <Box sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+                        <Typography variant="h5" align="center" component="div">
+                            Crypt Journal
+                        </Typography>
+                    </Box>
+
+                    <Tooltip title="Customer Support">
+                        <Button color="inherit">
+                            <SupportAgentIcon />
+                        </Button>
+                    </Tooltip>
 
                     {!isLoggedIn && (
-                        <>
-                            <Button color="inherit" onClick={() => navigate('/auth?mode=sign_up')}>
-                                Sign Up
-                            </Button>
+                        <> 
+                            <Tooltip title="Sign Up/Register">
+                                <Button color="inherit" onClick={() => navigate('/auth?mode=sign_up')}>
+                                    <PersonAddIcon />
+                                </Button>
+                            </Tooltip>
 
-                            <Button color="inherit" onClick={() => navigate('/auth?mode=sign_in')}>
-                                Login
-                            </Button>
+                            <Tooltip title="Login">
+                                <Button color="inherit" onClick={() => navigate('/auth?mode=sign_in')}>
+                                    <LoginIcon />
+                                </Button>
+                            </Tooltip>
                         </>
                     )}
 
                     {isLoggedIn && (
-                        <Button color="inherit" onClick={() => {
-                            localStorage.removeItem("token");
-                            navigate('/auth?mode=sign_in');
-                        }}>
-                            LogOut
-                        </Button>
+                        <>
+                        <Tooltip title="Logout">
+                            <Button color="inherit" onClick={() => {
+                                localStorage.removeItem("token");
+                                navigate('/auth?mode=sign_in');
+                            }}>
+                                <LogoutIcon />
+                            </Button>
+                        </Tooltip>
+                        
+                        <Tooltip title="Settings">
+                            <Button color="inherit">
+                                <SettingsIcon />
+                            </Button>
+                        </Tooltip>
+                        
+                        </>
                     )}
 
                 </Toolbar>
