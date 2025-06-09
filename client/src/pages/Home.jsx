@@ -23,9 +23,9 @@ const Home = () => {
 
             <Heading 
                 text="Crypt Journal - A Free, Secure Space for Your Mind" 
-                variant="h4" 
+                variant="h5" 
                 align="center" 
-                sx={{ mt: 10 }}
+                sx={{ mt: 15 }}
             />
 
             <img 
@@ -39,10 +39,17 @@ const Home = () => {
 
             <CustomButton
                 variant="contained"
-                color="primary"
+                color="transparent"
                 size="large"
                 onClick={() => navigate("/auth?mode=sign_up")}
-                sx={{ display: "block", mx: "auto", mb: 5 }}
+                sx={{
+                    display: "block", mx: "auto", mb: 5, border: 3, borderRadius: "25px", transition: "transform 0.2s ease-in-out",
+                    '&:hover':{
+                        color: "#0000FF",
+                        borderColor: "primary.main",
+                        transform: "scale(1.1)"
+                    }
+                }}
             >
                 Create Your Secret Diary Now!
             </CustomButton>
