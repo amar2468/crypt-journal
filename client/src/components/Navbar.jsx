@@ -82,8 +82,8 @@ const Navbar = () => {
                             </Button>
                         </Tooltip>
                         
-                        <Tooltip title="Settings">
-                            <Button color="inherit">
+                        <Tooltip title="Account Settings">
+                            <Button color="inherit" onClick={() => navigate('/settings')}>
                                 <SettingsIcon />
                             </Button>
                         </Tooltip>
