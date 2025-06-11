@@ -115,6 +115,11 @@ const Login = ( { mode, switchForms } ) => {
 
                 localStorage.setItem("token", res.data.token);
 
+                // After 2 seconds, navigate to the homepage.
+                setTimeout(() => {
+                    navigate("/");
+                }, 2000);
+
                 return;
             }
         }
