@@ -13,6 +13,9 @@ const createTables = require('./setup');
 // Import authentication-related routes
 const authRoutes = require('./routes/auth');
 
+// Import profile-related routes
+const profileRoutes = require('./routes/profileManagement');
+
 // Calling "express" function, which creates an "express" application instance
 const app = express();
 
@@ -27,6 +30,9 @@ app.use(express.json());
 
 // Mount authentication routes under the /api/auth path
 app.use("/api/auth", authRoutes);
+
+// Mount profile management routes under the /api/profileManagement path
+app.use("/api/profileManagement", profileRoutes);
 
 // Start the server and listen on port 4000
 app.listen(4000, () => {
