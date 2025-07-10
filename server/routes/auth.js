@@ -1,13 +1,19 @@
+// Importing "express" module
 const express = require('express');
 
+// Create a new router instance for defining route handlers
 const router = express.Router();
 
+// Import bcrypt for hashing and comparing passwords securely
 const bcrypt = require('bcrypt');
 
+// Import function to send password reset emails
 const { sendPasswordResetEmail } = require('../sendEmail');
 
+// Import Node.js built-in crypto module for generating secure tokens
 const crypto = require('crypto');
 
+// Import middleware function to authenticate JWT tokens
 const { authenticateToken } = require('../middleware/verifyToken');
 
 // Importing the DB connection
