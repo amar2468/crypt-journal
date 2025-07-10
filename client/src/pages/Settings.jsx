@@ -16,6 +16,7 @@ import Select from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
+import { jwtDecode } from "jwt-decode";
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -49,8 +50,38 @@ const Settings = () => {
     // When the page is loaded, we will retrieve the user's token and make an API call to the backend,
     // to retrieve the user's information and populate the settings page with those details.
     useEffect(() => {
+
+        // Function checks if the token has expired by comparing the token expiry date with the current date.
+        const isTokenExpired = (token) => {
+            try {
+                const decoded = jwtDecode(token);
+
+                const currentTime = Date.now() / 1000;
+
+                return decoded.exp < currentTime;
+            }
+
+            // If the token has expired, return true.
+            catch {
+                return true;
+            }
+        };
+
         // Retrieve the token from localStorage (set after login)
         const token = localStorage.getItem("token");
+
+        // If the token has expired, we will display an error message and remove the token. Finally, the user will be
+        // redirected to the login page.
+        if (isTokenExpired(token)) {
+            setErrorMessage("Session expired. You have been logged out automatically. Please log on again.");
+
+            localStorage.removeItem("token");
+
+            // After 2 seconds, navigate to the login page.
+            setTimeout(() => {
+                navigate("/auth?mode=sign_in");
+            }, 2000);
+        }
         
         // If the token exists for this user, proceed with the needful.
         if (token) {
@@ -99,10 +130,6 @@ const Settings = () => {
             getUserData();
         }
 
-        // If the user is not authorised, we will redirect to the main page.
-        else {
-            navigate("/")
-        }
     }, [navigate]);
 
     // If the user is not authorised, do not show anything on the page.
@@ -225,6 +252,8 @@ const Settings = () => {
                     >
                         Update your account information below to keep your profile accurate and up to date.
                     </Paragraph>
+
+                    { errorAlert }
 
                     <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
                         <CustomInputField
