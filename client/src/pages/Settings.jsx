@@ -43,6 +43,9 @@ const Settings = () => {
     // State variable that shows error alerts, if something isn't right.
     const [errorMessage, setErrorMessage] = useState("");
 
+    // State variable that holds the state of the "Account Information" button, to see if it is enabled or disabled.
+    const [isAccInfoBtnDisabled, setIsAccInfoBtnDisabled] = useState(true);
+
     // When the page is loaded, we will retrieve the user's token and make an API call to the backend,
     // to retrieve the user's information and populate the settings page with those details.
     useEffect(() => {
@@ -134,6 +137,8 @@ const Settings = () => {
             }));
         }
 
+        // Re-enable the button, as a change was made to the account information.
+        setIsAccInfoBtnDisabled(false);
     };
 
     const submitAccountInfoForm = async () => {
@@ -312,6 +317,8 @@ const Settings = () => {
                             sx={{ mt: 3 }}
 
                             onClick={submitAccountInfoForm}
+
+                            disabled = {isAccInfoBtnDisabled}
                         >
                             Save
                         </CustomButton>
