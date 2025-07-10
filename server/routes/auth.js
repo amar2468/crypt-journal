@@ -102,7 +102,7 @@ router.post('/sign_up', authenticateToken, async(req, res) => {
             const token = jwt.sign(
                 { userId: result.rows[0].id, email: result.rows[0].email },
                 SECRET_KEY_JWT,
-                { expiresIn: "1h" }
+                { expiresIn: "7d" }
             );
 
             // Returning the "User Account Created" message, along with the token and user info, so that we can make sure that the user
@@ -156,7 +156,7 @@ router.post('/login', authenticateToken, async(req, res) => {
                 const token = jwt.sign(
                     { userId: result.rows[0].userId, email: result.rows[0].email },
                     SECRET_KEY_JWT,
-                    { expiresIn: "1h" }
+                    { expiresIn: "7d" }
                 );
                 
                 // Returning the "login successful" message, along with the token and user info, so that we can make sure that the user
