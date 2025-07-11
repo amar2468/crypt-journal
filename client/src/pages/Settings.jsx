@@ -168,8 +168,146 @@ const Settings = () => {
         setIsAccInfoBtnDisabled(false);
     };
 
+    // Function that checks the "Account Information" form and submits it to the backend, if all the checks pass successfully.
     const submitAccountInfoForm = async () => {
-        
+        // Clearing any error alerts that may be shown on the page.
+        setErrorMessage("");
+
+        // Removing leading and trailing spaces from the "first name".
+        const trimmedFirstName = accountInfoForm.firstName.trim();
+
+        // If the "first name" field is empty, we will stop the form submission.
+        if (!trimmedFirstName) {
+            setErrorMessage("First name cannot be empty! Enter a valid first name.");
+
+            return;
+        }
+
+        // If the "first name" length is less than 2 or greater than 50, we will stop the form submission.
+        if (trimmedFirstName.length < 2 || trimmedFirstName.length > 50) {
+            setErrorMessage("First name needs to be between 2-50 characters long.");
+
+            return;
+        }
+
+        // Regex which only allows letters, spaces, apostrophes, or hypens
+        const firstNameRegex = /^[a-zA-ZÀ-ÿ'-\s]+$/;
+
+        // If the "first name" contains something other than letters, spaces, apostrophes, or hypens, the form will not be submitted.
+        if (!(firstNameRegex.test(trimmedFirstName))) {
+            setErrorMessage("First name can only contain letters, spaces, apostrophes, or hyphens.");
+
+            return;
+        }
+
+        // Updating the "first name" form field with the trimmed version of it.
+        setAccountInfoForm(prev => ({
+            ...prev,
+            firstName: trimmedFirstName
+        }));
+
+        // Removing leading and trailing spaces from the "last name".
+        const trimmedLastName = accountInfoForm.lastName.trim();
+
+        // If the "last name" field is empty, we will stop the form submission.
+        if (!(trimmedLastName)) {
+            setErrorMessage("Last name cannot be empty! Enter a valid last name.");
+
+            return;
+        }
+
+        // If the "last name" length is less than 2 or greater than 50, we will stop the form submission.
+        if (trimmedLastName.length < 2 || trimmedLastName.length > 50) {
+            setErrorMessage("Last name needs to be between 2-50 characters long.");
+
+            return;
+        }
+
+        // Regex which only allows letters, spaces, apostrophes, or hypens
+        const lastNameRegex = /^[a-zA-ZÀ-ÿ'-\s]+$/;
+
+        // If the "last name" contains something other than letters, spaces, apostrophes, or hypens, the form will not be submitted.
+        if (!(lastNameRegex.test(trimmedLastName))) {
+            setErrorMessage("Last name can only contain letters, spaces, apostrophes, or hyphens.");
+
+            return;
+        }
+
+        // Updating the "last name" form field with the trimmed version of it.
+        setAccountInfoForm(prev => ({
+            ...prev,
+            lastName: trimmedLastName
+        }));
+
+        // Removing leading and trailing spaces from the "email".
+        const trimmedEmail = accountInfoForm.email.trim();
+
+        // If the "email" field is empty, we will stop the form submission
+        if (!(trimmedEmail)) {
+            setErrorMessage("Email cannot be empty! Enter a valid email address.");
+
+            return;
+        }
+
+        // Basic email format regex: ensures one "@" and at least one "." after it, with no spaces
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // If the email entered by the user is NOT compliant with the email format, the user will be prompted to enter a valid
+        // email address and the form will not be submitted.
+        if (!(emailRegex.test(trimmedEmail))) {
+            setErrorMessage("Please enter a valid email address.");
+
+            return;
+        }
+
+        // Updating the "email" form field with the trimmed version of it.
+        setAccountInfoForm(prev => ({
+            ...prev,
+            email: trimmedEmail
+        }));
+
+        // Removing leading and trailing spaces from the "phone number"
+        const trimmedPhoneNumber = accountInfoForm.phoneNumber.trim();
+
+        // If the "phone number" length is less than or equal to 7 or greater than 15, we will stop the form submission.
+        // It allows the phone number to be blank.
+        if ((trimmedPhoneNumber.length != 0) && trimmedPhoneNumber.length <= 7 || trimmedPhoneNumber.length > 15) {
+            setErrorMessage("Phone number must be between 8 and 15 characters, or left blank");
+
+            return;
+        }
+
+        // Basic "phone number" format regex: Allows digits, plus sign, dashes, and brackets
+        const validCharactersPhone = /^[+]?[\d\s\-()]+$/;
+
+        // If the phone number is not compliant with the above regex
+        if (!(validCharactersPhone.test(trimmedPhoneNumber))) {
+            setErrorMessage("Please enter a valid phone number.");
+
+            return;
+        }
+
+        // Regex that will detect if all the digits are the same e.g. 11111 or 22222
+        const sameDigitRegex = /^(\d)\1+$/;
+
+        // If the phone number consists of the same digit, we will stop the form submission.
+        if (!(sameDigitRegex.test(trimmedPhoneNumber))) {
+            setErrorMessage("Phone number cannot be all the same digit.");
+
+            return;
+        }
+
+        // Retrieve the current value of the "MFA" toggle, to see if it has been enabled or disabled.
+        const mfa_enabled = accountInfoForm.mfaEnabled;
+
+        // If "MFA" has been enabled, but the phone number is empty, we will stop the form submission. The phone number is required,
+        // in order to set the MFA.
+        if (mfa_enabled === true && !(trimmedPhoneNumber)) {
+            setErrorMessage("You must enter your phone number, if you want to enable MFA.");
+
+            return;
+        }
+
     };
 
     // Most common timezones added into the list
