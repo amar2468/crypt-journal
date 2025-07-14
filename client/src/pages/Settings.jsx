@@ -33,6 +33,7 @@ const Settings = () => {
     // State variable which represents the date format
     const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
 
+    // State variable for the account information form, which will change depending on the specific user info.
     const [accountInfoForm, setAccountInfoForm] = useState({
         firstName: '',
         lastName: '',
@@ -40,6 +41,9 @@ const Settings = () => {
         phoneNumber: '',
         mfaEnabled: false
     });
+
+    // State variable that shows success alerts
+    const [successMessage, setSuccessMessage] = useState("");
 
     // State variable that shows error alerts, if something isn't right.
     const [errorMessage, setErrorMessage] = useState("");
@@ -271,7 +275,7 @@ const Settings = () => {
 
         // If the "phone number" length is less than or equal to 7 or greater than 15, we will stop the form submission.
         // It allows the phone number to be blank.
-        if ((trimmedPhoneNumber.length != 0) && trimmedPhoneNumber.length <= 7 || trimmedPhoneNumber.length > 15) {
+        if ((trimmedPhoneNumber.length !== 0) && (trimmedPhoneNumber.length <= 7 || trimmedPhoneNumber.length > 15)) {
             setErrorMessage("Phone number must be between 8 and 15 characters, or left blank");
 
             return;
@@ -281,7 +285,7 @@ const Settings = () => {
         const validCharactersPhone = /^[+]?[\d\s\-()]+$/;
 
         // If the phone number is not compliant with the above regex
-        if (!(validCharactersPhone.test(trimmedPhoneNumber))) {
+        if ((trimmedPhoneNumber.length !== 0) && !(validCharactersPhone.test(trimmedPhoneNumber))) {
             setErrorMessage("Please enter a valid phone number.");
 
             return;
@@ -291,7 +295,7 @@ const Settings = () => {
         const sameDigitRegex = /^(\d)\1+$/;
 
         // If the phone number consists of the same digit, we will stop the form submission.
-        if (!(sameDigitRegex.test(trimmedPhoneNumber))) {
+        if ((trimmedPhoneNumber.length !== 0) && !(sameDigitRegex.test(trimmedPhoneNumber))) {
             setErrorMessage("Phone number cannot be all the same digit.");
 
             return;
@@ -304,6 +308,48 @@ const Settings = () => {
         // in order to set the MFA.
         if (mfa_enabled === true && !(trimmedPhoneNumber)) {
             setErrorMessage("You must enter your phone number, if you want to enable MFA.");
+
+            return;
+        }
+
+        // Attempt to make an API call to the backend "editAccountInformation" route, passing the form data
+        // This will attempt to update the user account information.
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await axios.post("http://localhost:4000/api/profileManagement/editAccountInformation", accountInfoForm, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            // Clearing success and error alerts, as we want the new ones to be displayed.
+            setSuccessMessage("");
+            setErrorMessage("");
+
+            // If the account information updated successfully, we will inform the user about it using a success alert.
+            if (res && res.status === 200) {
+                // Set the success message
+                setSuccessMessage(res.data.message);
+
+                // After 1 second, clear the success message, as the user knows that the account information has been updated.
+                setTimeout(() => {
+                    setSuccessMessage("");
+                }, 1000);
+
+                return;
+            }
+        }
+
+        // If we encounter an error when updating the account information, we will display the error alert.
+        catch (err) {
+            // Set the success message
+            setErrorMessage(err.response.message);
+
+            // After 1 second, clear the success message, as the user knows that the account information has been updated.
+            setTimeout(() => {
+                setErrorMessage("");
+            }, 1000);
 
             return;
         }
@@ -340,11 +386,22 @@ const Settings = () => {
 
     let errorAlert;
 
-    // If an error message was detected, it will be displayed in the form of an alert message.
+    // If the backend returns a failure message, we will display the error alert.
     if (errorMessage) {
         errorAlert = (
             <Alert variant="filled" severity="error" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
                 { errorMessage }
+            </Alert>
+        );
+    }
+
+    let successAlert;
+
+    // If the backend returns a success message, we will display the success alert.
+    if (successMessage) {
+        successAlert = (
+            <Alert variant="filled" severity="success" sx={{ width: "50%", margin: "0 auto", mt: 5 }}>
+                { successMessage }
             </Alert>
         );
     }
@@ -392,6 +449,8 @@ const Settings = () => {
                     </Paragraph>
 
                     { errorAlert }
+
+                    { successAlert }
 
                     <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
                         <CustomInputField
