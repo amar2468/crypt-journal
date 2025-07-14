@@ -73,4 +73,98 @@ router.get('/getUserAccountInfo', authenticateToken, async(req, res) => {
     }
 });
 
+// Route which will attempt to update the account information by getting the current entry in the database and updating it
+// using the form data that the user passed in the form.
+router.post('/editAccountInformation', authenticateToken, async(req, res) => {
+    // If the user is logged in, allow the retrieval of the user info
+    if (req.user) {
+        // Retrieving all the form fields from the account information form.
+        const { firstName, lastName, email, phoneNumber, mfaEnabled } = req.body;
+
+        // Attempt to update the fields that were updated in the Account Information section
+        try {
+            // Get the user record
+            const result = await db.query("SELECT * FROM users where email=$1 LIMIT 1;", [req.user.email]);
+
+            // If the user was found, proceed with updating the user account information
+            if (result.rowCount > 0) {
+                // Retrieving a bunch of fields from the database, so that we can compare it against the form fields.
+                const currentFirstName = result.rows[0].first_name;
+
+                const currentLastName = result.rows[0].last_name;
+
+                const currentEmail = result.rows[0].email;
+
+                const currentPhoneNumber = result.rows[0].phone_number;
+
+                const currentMFA = result.rows[0].mfa_enabled;
+
+                // Checking to see if the first name has been updated.
+                if (currentFirstName !== firstName) {
+                    // Update the first name
+                    await db.query(
+                        "UPDATE users SET first_name=$1 WHERE email=$2", [firstName, req.user.email]
+                    );
+                }
+
+                // Checking to see if the last name has been updated.
+                if (currentLastName !== lastName) {
+                    // Update the last name
+                    await db.query(
+                        "UPDATE users SET last_name=$1 WHERE email=$2", [lastName, req.user.email]
+                    );
+                }
+
+                // Checking to see if the email has been updated.
+                if (currentEmail !== email) {
+                    // Update the email
+                    await db.query(
+                        "UPDATE users SET email=$1 WHERE email=$2", [email, req.user.email]
+                    );
+                }
+
+                // Checking to see if the phone number has been updated.
+                if (currentPhoneNumber !== phoneNumber) {
+                    // Update the phone number
+                    await db.query(
+                        "UPDATE users SET phone_number=$1 WHERE email=$2", [phoneNumber, req.user.email]
+                    );
+                }
+
+                // Checking to see if the MFA has been updated.
+                if (currentMFA !== mfaEnabled) {
+                    // Updating the MFA
+                    await db.query(
+                        "UPDATE users SET mfa_enabled=$1 WHERE email=$2", [mfaEnabled, req.user.email]
+                    );
+                }
+
+                // Return 200 status message, indicating that the information was updated successfully.
+                return res.status(200).json({
+                    message: "Account information has been updated."
+                });
+            }
+
+            // If the user record couldn't be found, a 404 status is returned.
+            else {
+                return res.status(404).json({
+                    message: "User profile couldn't be found on our system. Please contact support for assistance."
+                });
+            }
+        }
+
+        // If there was an issue with updating the database, a 500 error is thrown.
+        catch {
+            return res.status(500).json({
+                message: "Encountered issue while updating the account information. Make sure that the information provided is valid."
+            });
+        }
+    }
+
+    // If the user is not logged in, don't allow them to update the information.
+    else {
+        console.log("No token detected. Please contact the system administator for assistance.");
+    }
+});
+
 module.exports = router
