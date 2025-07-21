@@ -27,12 +27,6 @@ const Settings = () => {
     // State variable representing if the user is authorised to view this page.
     const [authChecked, setAuthChecked] = useState(false);
 
-    // State variable which represents the timezone
-    const [timezone, setTimezone] = useState("Europe/Dublin");
-
-    // State variable which represents the date format
-    const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
-
     // State variable for the account information form, which will change depending on the specific user info.
     const [accountInfoForm, setAccountInfoForm] = useState({
         firstName: '',
@@ -40,6 +34,12 @@ const Settings = () => {
         email: '',
         phoneNumber: '',
         mfaEnabled: false
+    });
+
+    const [userPreferencesForm, setUserPreferencesForm] = useState({
+        timezone: '',
+        dateFormat: '',
+        enableAutosave: false
     });
 
     // State variable that shows success alerts
@@ -92,46 +92,103 @@ const Settings = () => {
             // Setting this to true means that we can show the contents of this page to the user (user is authorised.)
             setAuthChecked(true);
             
-            // Make an API GET call to retrieve the user details, passing the token to the backend.
+            // Make an API GET call to retrieve the user details, passing the token to the backend. Once user details are retrieved,
+            // we will populate the account information with the current user information.
             const getUserData = async () => {
-                const userDetails = await axios.get("http://localhost:4000/api/profileManagement/getUserAccountInfo", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+
+                // Attempt to make a GET request to retrieve the user details from the backend (supplying the user token), and 
+                // populate the current user account information in the form
+                try {
+                    // Making a GET request (passing the user token for authentication) and retrieving the user details
+                    const userDetails = await axios.get("http://localhost:4000/api/profileManagement/getUserAccountInfo", {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    // Clearing any previous alert messages from the page.
+                    setErrorMessage("");
+
+                    // If the user information was successfully retrieved, we will update the form with those details
+                    if (userDetails.status === 200) {
+                        // Populate the account information form with the details for this specific user (retrieved from the API call above.)
+                        setAccountInfoForm(prev => ({
+                            ...prev,
+                            firstName: userDetails.data.data.first_name,
+                            lastName: userDetails.data.data.last_name,
+                            email: userDetails.data.data.email,
+                            phoneNumber: userDetails.data.data.phone_number,
+                            mfaEnabled: userDetails.data.data.mfa_enabled
+                        }));
                     }
-                });
-
-                setErrorMessage("");
-
-                // If the user information was successfully retrieved, we will update the form with those details
-                if (userDetails.status === 200) {
-                    // Populate the account information form with the details for this specific user (retrieved from the API call above.)
-                    setAccountInfoForm(prev => ({
-                        ...prev,
-                        firstName: userDetails.data.data.first_name,
-                        lastName: userDetails.data.data.last_name,
-                        email: userDetails.data.data.email,
-                        phoneNumber: userDetails.data.data.phone_number,
-                        mfaEnabled: userDetails.data.data.mfa_enabled
-                    }));
                 }
 
-                // If the user couldn't be found, we will display that message to the user
-                else if (userDetails.status === 404) {
-                    setErrorMessage("Your user account information couldn't be found. Please raise this request with our support team.");
-                    
-                    return;
-                }
+                // If an error was encountered when retrieving the user details, we will display the relevant error message on the page.
+                catch (error) {
 
-                // If there was an internal server error, we will display that message to the user.
-                else if (userDetails.status === 500) {
-                    setErrorMessage("Internal server error - Please raise this request with our support team.");
+                    // If the error was either 404 or 500, it will show the specific error in question
+                    if (error.status === 404 || error.status === 500) {
+                        setErrorMessage(error.response.data.message);
 
-                    return;
+                        return;
+                    }
+
+                    // If it is a unknown error, we will just display a generic error message on the page.
+                    else {
+                        setErrorMessage("Error encountered.");
+
+                        return;
+                    }
                 }
             };
 
-            // After we check to see that the user is authorised, we will call the function above that makes the API call.
+            // Attempt to get the user preferences information and populate the form with the current user preferences.
+            const getUserPreferencesData = async() => {
+                // Try to make a GET request to get the user preferences. If successful, we will populate the user preferences
+                // form with the latest user preferences.
+                try {
+                    // Performing a GET request to retrieve the user preferences from the backend, passing the user token in the request
+                    const userPreferences = await axios.get("http://localhost:4000/api/profileManagement/getUserPreferences", {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    
+                    // If the user preferences were retrieved successfully, we will populate the user preferences form with the
+                    // current user preferences
+                    if (userPreferences.status === 200) {
+                        setUserPreferencesForm(prev => ({
+                            ...prev,
+                            timezone: userPreferences.data.data.timezone,
+                            dateFormat: userPreferences.data.data.date_format,
+                            enableAutosave: userPreferences.data.data.enable_autosave
+                        }));
+                    }
+                }
+
+                // If there was an error when retrieving the user preferences, we will display the relevant error message on the page
+                catch (error) {
+                    // If the error was either 404 or 500, it will show the specific error in question
+                    if (error.status === 401 || error.status === 404 || error.status === 500) {
+                        setErrorMessage(error.response.data.message);
+
+                        return;
+                    }
+
+                    // If it is a unknown error, we will just display a generic error message on the page.
+                    else {
+                        setErrorMessage("Error encountered.");
+
+                        return;
+                    }
+                }
+            };
+
+            // Calling the user data function to retrieve the current user account details
             getUserData();
+
+            // Calling the user preferences function to retrieve the current user preferences
+            getUserPreferencesData();
         }
 
     }, [navigate]);
@@ -160,7 +217,7 @@ const Settings = () => {
             }));
         }
 
-        // If the change was made to everything excluding the MFA, we will update it with the new info.
+        // If the change was made to anything excluding the MFA, we will update it with the new info.
         else {
             setAccountInfoForm(prev => ({
                 ...prev,
@@ -295,11 +352,17 @@ const Settings = () => {
         const sameDigitRegex = /^(\d)\1+$/;
 
         // If the phone number consists of the same digit, we will stop the form submission.
-        if ((trimmedPhoneNumber.length !== 0) && !(sameDigitRegex.test(trimmedPhoneNumber))) {
+        if ((trimmedPhoneNumber.length !== 0) && (sameDigitRegex.test(trimmedPhoneNumber))) {
             setErrorMessage("Phone number cannot be all the same digit.");
 
             return;
         }
+
+        // Updating the "phone number" form field with the trimmed version of it.
+        setAccountInfoForm(prev => ({
+            ...prev,
+            phoneNumber: trimmedPhoneNumber
+        }));
 
         // Retrieve the current value of the "MFA" toggle, to see if it has been enabled or disabled.
         const mfa_enabled = accountInfoForm.mfaEnabled;
@@ -343,10 +406,10 @@ const Settings = () => {
 
         // If we encounter an error when updating the account information, we will display the error alert.
         catch (err) {
-            // Set the success message
+            // Set the error message
             setErrorMessage(err.response.message);
 
-            // After 1 second, clear the success message, as the user knows that the account information has been updated.
+            // After 1 second, clear the error message, as the user knows that the account information has been updated.
             setTimeout(() => {
                 setErrorMessage("");
             }, 1000);
@@ -354,6 +417,82 @@ const Settings = () => {
             return;
         }
 
+    };
+
+    // When an update is made to the user preferences form, this will be executed.
+    const updateUserPreferencesForm = (event) => {
+        // Getting the field name that was updated
+        const name = event.target.name;
+
+        // Getting the field value that was updated.
+        const value = event.target.value;
+
+        // Checking to see if autosave is enabled
+        const autosaveIsEnabled = event.target.checked;
+
+        // If the change was to the autosave, we will update the autosave toggle with the new info.
+        if (event.target.type === "checkbox") {
+            setUserPreferencesForm(prev => ({
+                ...prev,
+                [name]: autosaveIsEnabled
+            }));
+        }
+
+        // If the change was made to anything excluding the autosave, we will update it with the new info.
+        else {
+            setUserPreferencesForm(prev => ({
+                ...prev,
+                [name]: value
+            }))
+        }
+    };
+
+    // Function that submits the "User Preferences" data to the backend. If it is successful, a success alert will be displayed
+    const submitUserPreferences = async() => {
+        // Attempt to make an API call to the backend "editUserPreferences" route, passing the form data
+        // This will attempt to update the user preferences
+        try {
+            // Retrieving the current user token, so that it can be passed to the backend, in order to verify that the
+            // user is authenticated.
+            const token = localStorage.getItem("token");
+
+            // Making a POST request to submit the updated user preferences. The user token is passed in the request.
+            const res = await axios.post("http://localhost:4000/api/profileManagement/editUserPreferences", userPreferencesForm, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            // Clearing success and error alerts, as we want the new ones to be displayed.
+            setSuccessMessage("");
+            setErrorMessage("");
+
+            // If the request was successful, we will display the success alert and clear it after 1 second.
+            if (res && res.status === 200) {
+                // Set the success alert
+                setSuccessMessage(res.data.message);
+
+                // After 1 second, clear the success alert, as the user knows that the user preferences have been updated.
+                setTimeout(() => {
+                    setSuccessMessage("");
+                }, 1000);
+
+                return;
+            }
+        }
+
+        // If we encounter an error when updating the user preferences, we will display the error alert and clear it after 1 second
+        catch (err) {
+            // Set the error alert
+            setErrorMessage(err.response.message);
+
+            // After 1 second, clear the error alert, as the user knows that an error was encountered.
+            setTimeout(() => {
+                setErrorMessage("");
+            }, 1000);
+
+            return;
+        }
     };
 
     // Most common timezones added into the list
@@ -525,7 +664,7 @@ const Settings = () => {
 
                             name="mfaEnabled"
 
-                            value={accountInfoForm.mfaEnabled}
+                            checked={accountInfoForm.mfaEnabled}
 
                             onChange={updateAccountInfoForm}
                             
@@ -583,11 +722,17 @@ const Settings = () => {
                         and efficient user experience.
                     </Paragraph>
 
+                    { errorAlert }
+
+                    { successAlert }
+
                     <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
                         <Select
-                            value={timezone}
+                            name="timezone"
 
-                            onChange={(e) => setTimezone(e.target.value)}
+                            value={userPreferencesForm.timezone}
+
+                            onChange={updateUserPreferencesForm}
 
                             sx={{ mt: 3 }}
                         >
@@ -598,13 +743,33 @@ const Settings = () => {
                             ))}
                         </Select>
 
-                        <Select value={dateFormat} onChange={(event) => setDateFormat(event.target.value)} sx={{ mt: 3 }}>
+                        <Select
+                            name="dateFormat"
+
+                            value={userPreferencesForm.dateFormat}
+                            
+                            onChange={updateUserPreferencesForm}
+                            
+                            sx={{ mt: 3 }}
+                        >
                             <MenuItem value="MM/DD/YYYY">MM/DD/YYYY</MenuItem>
                             <MenuItem value="DD/MM/YYYY">DD/MM/YYYY</MenuItem>
                             <MenuItem value="YYYY-MM-DD">YYYY-MM-DD</MenuItem>
                         </Select>
                         
-                        <FormControlLabel control={<Switch />} label="Enable Autosave" sx={{ mt: 3 }} />
+                        <FormControlLabel
+                            control={<Switch />}
+
+                            name="enableAutosave"
+
+                            checked={userPreferencesForm.enableAutosave}
+
+                            onChange={updateUserPreferencesForm}
+                            
+                            label="Enable Autosave"
+                            
+                            sx={{ mt: 3 }}    
+                        />
 
                         <CustomButton
                             variant="contained"
@@ -612,6 +777,8 @@ const Settings = () => {
                             color="secondary"
 
                             size="large"
+
+                            onClick={submitUserPreferences}
 
                             sx={{ mt: 3 }}
                         >
