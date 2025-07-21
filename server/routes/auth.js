@@ -105,6 +105,19 @@ router.post('/sign_up', authenticateToken, async(req, res) => {
                 { expiresIn: "7d" }
             );
 
+            // Once the user record is created, we will add an entry in the user preferences table, referencing the "user" table ID
+            // field as the foreign key.
+            db.query(`
+                INSERT INTO user_preferences (
+                    user_id,
+                    timezone,
+                    date_format,
+                    enable_autosave
+                ) VALUES (
+                    $1, 'Europe/Dublin', 'DD/MM/YYYY', false
+                )
+            `, [result.rows[0].id])
+
             // Returning the "User Account Created" message, along with the token and user info, so that we can make sure that the user
             // is logged in.
             return res.status(201).json({
