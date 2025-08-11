@@ -17,6 +17,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import { jwtDecode } from "jwt-decode";
+import Modal from '@mui/material/Modal';
+import { Typography } from '@mui/material';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -36,11 +38,71 @@ const Settings = () => {
         mfaEnabled: false
     });
 
+    // State variable for user preferences form, which will change depending on the specific user info
     const [userPreferencesForm, setUserPreferencesForm] = useState({
         timezone: '',
         dateFormat: '',
         enableAutosave: false
     });
+
+    // Variable that will indicate whether the "delete account" modal is presented or not.
+    const [deleteAccountPrompt, setDeleteAccountPrompt] = useState(false);
+
+    // If the initial button to delete the account is clicked, this will change the value of the "deleteAccountPrompt" state variable,
+    // indicating that the modal should be displayed, which will ask the user to confirm the deletion.
+    const openDeleteAccountPrompt = () => {
+        setDeleteAccountPrompt(true);
+    }
+
+    // If the user clicks the "cancel" button in the modal, it will just change the value of the "deleteAccountPrompt" state variable,
+    // indicating that the modal should be closed.
+    const closeDeleteAccountPrompt = () => {
+        setDeleteAccountPrompt(false);
+    }
+
+    // If the user confirms the deletion of the account (by clicking on the delete button in the modal), we will make a DELETE request
+    // and display the outcome of the operation to the user.
+    const deleteAccount = async () => {
+        // Try to make a DELETE call to the node.js route, in order to delete the account
+        try {
+            // Retrieving the current user token
+            const token = localStorage.getItem("token");
+
+            // Make a DELETE request, passing the node.js route, which will attempt to delete the user account.
+            const deleteAccountRequest = await axios.delete("http://localhost:4000/api/profileManagement/deleteAccount", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            // Clearing any previous alert messages from the page.
+            setErrorMessage("");
+            setSuccessMessage("");
+
+            // If the user record was deleted, we will inform the user about it.
+            if (deleteAccountRequest.status === 200) {
+                setSuccessMessage(deleteAccountRequest.data.message);
+
+                // After deleting the account and display the message to the user, wait 1 second and redirect to the homepage.
+                setTimeout(() => {
+                    localStorage.removeItem("token");
+                    navigate('/');
+                }, 1000);
+
+                return;
+            }
+
+        }
+
+        // If there was issue when deleting the user account, display the message in the form of an alert.
+        catch (error) {
+            if (error.status === 500) {
+                setErrorMessage(error.response.data.message);
+
+                return;
+            }
+        }
+    }
 
     // State variable that shows success alerts
     const [successMessage, setSuccessMessage] = useState("");
@@ -824,9 +886,81 @@ const Settings = () => {
                             size="large"
 
                             sx={{ mt: 3 }}
+
+                            onClick={openDeleteAccountPrompt}
                         >
                             Delete Your Account
                         </CustomButton>
+
+                        <Modal
+                            open={deleteAccountPrompt}
+
+                            onClose={closeDeleteAccountPrompt}
+
+                            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box 
+                                sx={{
+                                    bgcolor: "#ffffff",
+                                    border: "2px solid #000000",
+                                    boxShadow: 24,
+                                    borderRadius: 2, 
+                                    width: "auto",
+                                    maxWidth: "50%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    overflow: "hidden"
+                                }}
+                            >
+                                <Box sx={{ p: 3, flexGrow: 1}}>
+                                    <Typography id="modal-modal-description" variant="h6" component="h2" sx={{ mt: 2 }}>
+                                        Are you sure that you wish to delete your account? Please be aware that we cannot recover anything, if you decide to delete this account.
+                                    </Typography>
+
+                                    { errorAlert }
+
+                                    { successAlert }
+                                </Box>
+
+                                <Box
+                                    sx={{
+                                        p: 2,
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                        gap: 2,
+                                        borderTop: "1px solid #000000"
+                                    }}
+                                >
+                                    <CustomButton
+                                        variant="contained"
+
+                                        color="error"
+
+                                        size="large"
+
+                                        onClick={deleteAccount}
+                                    >
+                                        Delete Account
+                                    </CustomButton>
+
+                                    <CustomButton
+                                        variant="contained"
+
+                                        color="secondary"
+
+                                        size="large"
+
+                                        onClick={closeDeleteAccountPrompt}
+                                        
+                                    >
+                                        Cancel
+                                    </CustomButton>
+                                </Box>
+                            </Box>
+
+                        </Modal>
                     </Box>
 
                     <Footer />
