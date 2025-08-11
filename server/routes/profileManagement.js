@@ -336,4 +336,49 @@ router.post('/editUserPreferences', authenticateToken, async(req, res) => {
     }
 });
 
+// Route which will attempt to remove the user account
+router.delete('/deleteAccount', authenticateToken, async(req, res) => {
+    // If the user is logged in, allow the potential deletion of the account
+    if (req.user) {
+        // Try to find the user record and remove it from "user_preferences" and "users" table, removing any references of this user
+        try {
+            // Find the user by their email
+            const userRecord = await db.query("SELECT * FROM users WHERE email=$1 LIMIT 1", [req.user.email]);
+
+            // Extract the ID of the user
+            const userRecordID = userRecord.rows[0].id;
+
+            // Delete the user from the "user_preferences" table, as this is no longer needed and we want to remove the foreign key
+            await db.query("DELETE FROM user_preferences WHERE user_id=$1", [userRecordID]);
+
+            // Remove the user from the "users" table by searching for their email
+            await db.query("DELETE FROM users WHERE email=$1", [req.user.email]);
+
+            // Return 200 status message, indicating that the user account was deleted.
+            return res.status(200).json({
+                message: "Account has been deleted successfully."
+            });
+        }
+
+        // If we encounter an error when we try to delete the account, we will send the information back to the user and log an
+        // error message to the console.
+        catch (error) {
+            console.error("Error when deleting the account: ", error);
+
+            return res.status(500).json({
+                message: "Failed to delete the account."
+            });
+        }
+    }
+
+    // If the user is not logged in, don't allow them to update the user preferences
+    else {
+        console.error("The user does not have a valid token associated with their account. The user may need to log off and log back on.");
+
+        return res.status(401).json({
+            message: "Unauthorised: No token detected. Please log off and log back into your account."
+        });
+    }
+});
+
 module.exports = router
