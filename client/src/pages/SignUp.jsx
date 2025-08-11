@@ -230,6 +230,11 @@ const SignUp = ( { mode, switchForms } ) => {
 
                 localStorage.setItem("token", res.data.token);
 
+                // Once the user gets the message that their account creation was successful, wait 1 second and redirect to the homepage.
+                setTimeout(() => {
+                    navigate("/");
+                }, 1000);
+
                 return;
             }
         }
