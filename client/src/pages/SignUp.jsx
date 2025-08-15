@@ -42,6 +42,10 @@ const SignUp = ( { mode, switchForms } ) => {
     // State variable that will store the success message, when the form is submitted.
     const [submitFormSuccessMessage, setSubmitFormSuccessMessage] = useState('');
 
+    // Creating a variable to enable/disable the sign up button. It will be disabled when the user clicks the button and the
+    // request is being processed.
+    const [disableSignUpButton, setDisableSignupButton] = useState(false);
+
     // Checking whether the token is present - if it is there, it means that the user is logged in, so they should be redirected
     // away from the page. If there is no token, we will set the auth check to true, meaning that the page can be safely displayed.
     useEffect(() => {
@@ -227,6 +231,9 @@ const SignUp = ( { mode, switchForms } ) => {
             // If the server returns a 201 response, display the success message on the page.
             if (res && res.status === 201) {
                 setSubmitFormSuccessMessage("Your account has been created successfully. Welcome!");
+
+                // Disable the sign up button, to prevent the user from submitting multiple forms at the same time.
+                setDisableSignupButton(true);
 
                 localStorage.setItem("token", res.data.token);
 
@@ -428,6 +435,7 @@ const SignUp = ( { mode, switchForms } ) => {
                     size="large"
                     sx={{ mt: 3}}
                     onClick={handleSubmit}
+                    disabled={disableSignUpButton}
                 >
                     Sign Up
                 </CustomButton>

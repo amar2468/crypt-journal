@@ -83,6 +83,9 @@ const Settings = () => {
             if (deleteAccountRequest.status === 200) {
                 setSuccessMessage(deleteAccountRequest.data.message);
 
+                // Disabling the "delete" and "cancel" buttons that appear in the modal, as the request is being processed.
+                setDisableModalButtons(true);
+
                 // After deleting the account and display the message to the user, wait 1 second and redirect to the homepage.
                 setTimeout(() => {
                     localStorage.removeItem("token");
@@ -99,6 +102,9 @@ const Settings = () => {
             if (error.status === 500) {
                 setErrorMessage(error.response.data.message);
 
+                // Re-enabling the "delete" and "cancel" buttons that appear in the modal, as there was an issue with the request.
+                setDisableModalButtons(false);
+
                 return;
             }
         }
@@ -112,6 +118,12 @@ const Settings = () => {
 
     // State variable that holds the state of the "Account Information" button, to see if it is enabled or disabled.
     const [isAccInfoBtnDisabled, setIsAccInfoBtnDisabled] = useState(true);
+
+    // State variable that holds the state of the "Preferences" button, to see if it is enabled or disabled.
+    const [isPreferencesBtnDisabled, setIsPreferencesBtnDisabled] = useState(true);
+
+    // State variable that holds the state of the modal buttons, to see if they are enabled or disabled.
+    const [disableModalButtons, setDisableModalButtons] = useState(false);
 
     // When the page is loaded, we will retrieve the user's token and make an API call to the backend,
     // to retrieve the user's information and populate the settings page with those details.
@@ -507,6 +519,9 @@ const Settings = () => {
                 [name]: value
             }))
         }
+
+        // Re-enabling the preferences button
+        setIsPreferencesBtnDisabled(false);
     };
 
     // Function that submits the "User Preferences" data to the backend. If it is successful, a success alert will be displayed
@@ -842,6 +857,8 @@ const Settings = () => {
 
                             onClick={submitUserPreferences}
 
+                            disabled={isPreferencesBtnDisabled}
+
                             sx={{ mt: 3 }}
                         >
                             Save
@@ -941,6 +958,8 @@ const Settings = () => {
                                         size="large"
 
                                         onClick={deleteAccount}
+
+                                        disabled={disableModalButtons}
                                     >
                                         Delete Account
                                     </CustomButton>
@@ -953,6 +972,8 @@ const Settings = () => {
                                         size="large"
 
                                         onClick={closeDeleteAccountPrompt}
+
+                                        disabled={disableModalButtons}
                                         
                                     >
                                         Cancel
