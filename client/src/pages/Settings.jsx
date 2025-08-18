@@ -624,345 +624,152 @@ const Settings = () => {
     
     return (
         <div>
-            <Box position="absolute" display="flex">
-                <Tabs
-                    orientation="vertical"
 
-                    value={tabNumber}
+            <Navbar />
 
-                    onChange={handleChange}
+            <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", mt: 10 }}>
 
-                    aria-label="User settings - options"
+                <Box
+                    sx={{
+                        display: "flex",
+                        flex: 1
+                    }}
                 >
-                    <Tab label="Account Information" {...a11yProps(0)}></Tab>
-                    <Tab label="Preferences" {...a11yProps(1)}></Tab>
-                    <Tab label="Delete Your Account" {...a11yProps(2)}></Tab>
-                </Tabs>
-            </Box>
 
-            {tabNumber === 0 && (
-                <>
-                    <Navbar />
-
-                    <Heading
-                        text="Account Information"
-
-                        variant="h5"
-
-                        align="center"
-
-                        sx={{ mt: 15 }}
-                    />
-
-                    <Paragraph
-                        variant="body1"
-
-                        align="center"
-
-                        sx={{ mt: 5 }}
+                    <Box
+                        sx={{
+                            width: 240,
+                            p: 2,
+                            borderRight: "1px solid #ddd",
+                            flexShrink: 0
+                        }}
                     >
-                        Update your account information below to keep your profile accurate and up to date.
-                    </Paragraph>
+                        <Tabs
+                            orientation="vertical"
 
-                    { errorAlert }
+                            value={tabNumber}
 
-                    { successAlert }
+                            onChange={handleChange}
 
-                    <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
-                        <CustomInputField
-                            label="First Name"
-
-                            variant="outlined"
-
-                            type="text"
-
-                            name="firstName"
-
-                            value={accountInfoForm.firstName}
-
-                            onChange={updateAccountInfoForm}
-
-                            sx={{ mt: 3 }}
-                        />
-
-                        <CustomInputField
-                            label="Last Name"
-
-                            variant="outlined"
-
-                            type="text"
-
-                            name="lastName"
-
-                            value={accountInfoForm.lastName}
-
-                            onChange={updateAccountInfoForm}
-
-                            sx={{ mt: 3 }}
-                        />
-
-                        <CustomInputField
-                            label="Email"
-
-                            variant="outlined"
-
-                            type="email"
-
-                            name="email"
-
-                            value={accountInfoForm.email}
-
-                            onChange={updateAccountInfoForm}
-
-                            sx={{ mt: 3 }}
-                        />
-
-                        <CustomInputField
-                            label="Phone Number"
-
-                            variant="outlined"
-
-                            type="tel"
-
-                            name="phoneNumber"
-
-                            value={accountInfoForm.phoneNumber}
-
-                            onChange={updateAccountInfoForm}
-
-                            sx={{ mt: 3 }}
-                        />
-
-                        <FormControlLabel
-                        
-                            control={<Switch />}
-                            
-                            label="Enable Multi-Factor Authentication (MFA)"
-
-                            name="mfaEnabled"
-
-                            checked={accountInfoForm.mfaEnabled}
-
-                            onChange={updateAccountInfoForm}
-                            
-                            sx={{ mt: 3 }}
-                            
-                        />
-
-                        <CustomButton
-                            variant="contained"
-
-                            color="secondary"
-
-                            size="large"
-
-                            sx={{ mt: 3 }}
-
-                            onClick={submitAccountInfoForm}
-
-                            disabled = {isAccInfoBtnDisabled}
+                            aria-label="User settings - options"
                         >
-                            Save
-                        </CustomButton>
-                    
+                            <Tab label="Account Information" {...a11yProps(0)}></Tab>
+                            <Tab label="Preferences" {...a11yProps(1)}></Tab>
+                            <Tab label="Delete Your Account" {...a11yProps(2)}></Tab>
+                        </Tabs>
                     </Box>
 
-                    <Footer />
-                </>
-            )}
-
-            {tabNumber === 1 && (
-                <>
-                    <Navbar />
-
-                    <Heading
-                        text="Preferences"
-
-                        variant="h5"
-
-                        align="center"
-
-                        sx={{ mt: 15 }}
-                    />
-
-                    <Paragraph
-                        variant="body1"
-
-                        align="center"
-
-                        sx={{ mt: 5 }}
+                    <Box 
+                        sx={{
+                            flex: 1,
+                            p: 2
+                        }}
                     >
-                        Adjust your preferences to personalise how the application behaves
-                        and displays information.
-                        
-                        <br /> These settings help create a more tailored
-                        and efficient user experience.
-                    </Paragraph>
 
-                    { errorAlert }
+                        {tabNumber === 0 && (
+                            <>
+                                <Heading
+                                    text="Account Information"
 
-                    { successAlert }
+                                    variant="h5"
 
-                    <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
-                        <Select
-                            name="timezone"
+                                    align="center"
+                                />
 
-                            value={userPreferencesForm.timezone}
+                                <Paragraph
+                                    variant="body1"
 
-                            onChange={updateUserPreferencesForm}
+                                    align="center"
 
-                            sx={{ mt: 3 }}
-                        >
-                            {timezones.map((tz) => (
-                                <MenuItem key={tz} value={tz}>
-                                    {tz}
-                                </MenuItem>
-                            ))}
-                        </Select>
-
-                        <Select
-                            name="dateFormat"
-
-                            value={userPreferencesForm.dateFormat}
-                            
-                            onChange={updateUserPreferencesForm}
-                            
-                            sx={{ mt: 3 }}
-                        >
-                            <MenuItem value="MM/DD/YYYY">MM/DD/YYYY</MenuItem>
-                            <MenuItem value="DD/MM/YYYY">DD/MM/YYYY</MenuItem>
-                            <MenuItem value="YYYY-MM-DD">YYYY-MM-DD</MenuItem>
-                        </Select>
-                        
-                        <FormControlLabel
-                            control={<Switch />}
-
-                            name="enableAutosave"
-
-                            checked={userPreferencesForm.enableAutosave}
-
-                            onChange={updateUserPreferencesForm}
-                            
-                            label="Enable Autosave"
-                            
-                            sx={{ mt: 3 }}    
-                        />
-
-                        <CustomButton
-                            variant="contained"
-
-                            color="secondary"
-
-                            size="large"
-
-                            onClick={submitUserPreferences}
-
-                            disabled={isPreferencesBtnDisabled}
-
-                            sx={{ mt: 3 }}
-                        >
-                            Save
-                        </CustomButton>
-                    </Box>
-
-                    <Footer />
-                </>
-            )}
-
-            {tabNumber === 2 && (
-                <>
-                    <Navbar />
-                    
-                    <Heading
-                        text="Delete Your Account"
-                        
-                        variant="h5"
-
-                        align="center"
-
-                        sx={{ mt: 15 }}
-                    />
-
-                    <Paragraph
-                        variant="body1"
-
-                        align="center"
-
-                        sx={{ mt: 5 }}
-                    >
-                        Deleting your account will delete all the existing entries that you have.
-                        <br /> Please be aware that we cannot recover anything, if you decide to delete this account.
-                    </Paragraph>
-
-                    <Box display="flex" alignContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
-                        <CustomButton
-                            variant="contained"
-
-                            color="secondary"
-
-                            size="large"
-
-                            sx={{ mt: 3 }}
-
-                            onClick={openDeleteAccountPrompt}
-                        >
-                            Delete Your Account
-                        </CustomButton>
-
-                        <Modal
-                            open={deleteAccountPrompt}
-
-                            onClose={closeDeleteAccountPrompt}
-
-                            sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
-
-                            aria-describedby="modal-modal-description"
-                        >
-                            <Box 
-                                sx={{
-                                    bgcolor: "#ffffff",
-                                    border: "2px solid #000000",
-                                    boxShadow: 24,
-                                    borderRadius: 2, 
-                                    width: "auto",
-                                    maxWidth: "50%",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    overflow: "hidden"
-                                }}
-                            >
-                                <Box sx={{ p: 3, flexGrow: 1}}>
-                                    <Typography id="modal-modal-description" variant="h6" component="h2" sx={{ mt: 2 }}>
-                                        Are you sure that you wish to delete your account? Please be aware that we cannot recover anything, if you decide to delete this account.
-                                    </Typography>
-
-                                    { errorAlert }
-
-                                    { successAlert }
-                                </Box>
-
-                                <Box
-                                    sx={{
-                                        p: 2,
-                                        display: "flex",
-                                        justifyContent: "flex-start",
-                                        gap: 2,
-                                        borderTop: "1px solid #000000"
-                                    }}
+                                    sx={{ mt: 5 }}
                                 >
-                                    <CustomButton
-                                        variant="contained"
+                                    Update your account information below to keep your profile accurate and up to date.
+                                </Paragraph>
 
-                                        color="error"
+                                { errorAlert }
 
-                                        size="large"
+                                { successAlert }
 
-                                        onClick={deleteAccount}
+                                <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
+                                    <CustomInputField
+                                        label="First Name"
 
-                                        disabled={disableModalButtons}
-                                    >
-                                        Delete Account
-                                    </CustomButton>
+                                        variant="outlined"
+
+                                        type="text"
+
+                                        name="firstName"
+
+                                        value={accountInfoForm.firstName}
+
+                                        onChange={updateAccountInfoForm}
+
+                                        sx={{ mt: 3 }}
+                                    />
+
+                                    <CustomInputField
+                                        label="Last Name"
+
+                                        variant="outlined"
+
+                                        type="text"
+
+                                        name="lastName"
+
+                                        value={accountInfoForm.lastName}
+
+                                        onChange={updateAccountInfoForm}
+
+                                        sx={{ mt: 3 }}
+                                    />
+
+                                    <CustomInputField
+                                        label="Email"
+
+                                        variant="outlined"
+
+                                        type="email"
+
+                                        name="email"
+
+                                        value={accountInfoForm.email}
+
+                                        onChange={updateAccountInfoForm}
+
+                                        sx={{ mt: 3 }}
+                                    />
+
+                                    <CustomInputField
+                                        label="Phone Number"
+
+                                        variant="outlined"
+
+                                        type="tel"
+
+                                        name="phoneNumber"
+
+                                        value={accountInfoForm.phoneNumber}
+
+                                        onChange={updateAccountInfoForm}
+
+                                        sx={{ mt: 3 }}
+                                    />
+
+                                    <FormControlLabel
+                                    
+                                        control={<Switch />}
+                                        
+                                        label="Enable Multi-Factor Authentication (MFA)"
+
+                                        name="mfaEnabled"
+
+                                        checked={accountInfoForm.mfaEnabled}
+
+                                        onChange={updateAccountInfoForm}
+                                        
+                                        sx={{ mt: 3 }}
+                                        
+                                    />
 
                                     <CustomButton
                                         variant="contained"
@@ -971,22 +778,229 @@ const Settings = () => {
 
                                         size="large"
 
-                                        onClick={closeDeleteAccountPrompt}
+                                        sx={{ mt: 3 }}
 
-                                        disabled={disableModalButtons}
-                                        
+                                        onClick={submitAccountInfoForm}
+
+                                        disabled = {isAccInfoBtnDisabled}
                                     >
-                                        Cancel
+                                        Save
+                                    </CustomButton>
+                                
+                                </Box>
+                            </>
+                        )}
+
+                        {tabNumber === 1 && (
+                            <>
+
+                                <Heading
+                                    text="Preferences"
+
+                                    variant="h5"
+
+                                    align="center"
+                                />
+
+                                <Paragraph
+                                    variant="body1"
+
+                                    align="center"
+
+                                    sx={{ mt: 5 }}
+                                >
+                                    Adjust your preferences to personalise how the application behaves
+                                    and displays information.
+                                    
+                                    <br /> These settings help create a more tailored
+                                    and efficient user experience.
+                                </Paragraph>
+
+                                { errorAlert }
+
+                                { successAlert }
+
+                                <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
+                                    <Select
+                                        name="timezone"
+
+                                        value={userPreferencesForm.timezone}
+
+                                        onChange={updateUserPreferencesForm}
+
+                                        sx={{ mt: 3 }}
+                                    >
+                                        {timezones.map((tz) => (
+                                            <MenuItem key={tz} value={tz}>
+                                                {tz}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+
+                                    <Select
+                                        name="dateFormat"
+
+                                        value={userPreferencesForm.dateFormat}
+                                        
+                                        onChange={updateUserPreferencesForm}
+                                        
+                                        sx={{ mt: 3 }}
+                                    >
+                                        <MenuItem value="MM/DD/YYYY">MM/DD/YYYY</MenuItem>
+                                        <MenuItem value="DD/MM/YYYY">DD/MM/YYYY</MenuItem>
+                                        <MenuItem value="YYYY-MM-DD">YYYY-MM-DD</MenuItem>
+                                    </Select>
+                                    
+                                    <FormControlLabel
+                                        control={<Switch />}
+
+                                        name="enableAutosave"
+
+                                        checked={userPreferencesForm.enableAutosave}
+
+                                        onChange={updateUserPreferencesForm}
+                                        
+                                        label="Enable Autosave"
+                                        
+                                        sx={{ mt: 3 }}    
+                                    />
+
+                                    <CustomButton
+                                        variant="contained"
+
+                                        color="secondary"
+
+                                        size="large"
+
+                                        onClick={submitUserPreferences}
+
+                                        disabled={isPreferencesBtnDisabled}
+
+                                        sx={{ mt: 3 }}
+                                    >
+                                        Save
                                     </CustomButton>
                                 </Box>
-                            </Box>
+                            </>
+                        )}
 
-                        </Modal>
+                        {tabNumber === 2 && (
+                            <>
+                                <Heading
+                                    text="Delete Your Account"
+                                    
+                                    variant="h5"
+
+                                    align="center"
+                                />
+
+                                <Paragraph
+                                    variant="body1"
+
+                                    align="center"
+
+                                    sx={{ mt: 5 }}
+                                >
+                                    Deleting your account will delete all the existing entries that you have.
+                                    <br /> Please be aware that we cannot recover anything, if you decide to delete this account.
+                                </Paragraph>
+
+                                <Box display="flex" alignContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
+                                    <CustomButton
+                                        variant="contained"
+
+                                        color="secondary"
+
+                                        size="large"
+
+                                        sx={{ mt: 3 }}
+
+                                        onClick={openDeleteAccountPrompt}
+                                    >
+                                        Delete Your Account
+                                    </CustomButton>
+
+                                    <Modal
+                                        open={deleteAccountPrompt}
+
+                                        onClose={closeDeleteAccountPrompt}
+
+                                        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+
+                                        aria-describedby="modal-modal-description"
+                                    >
+                                        <Box 
+                                            sx={{
+                                                bgcolor: "#ffffff",
+                                                border: "2px solid #000000",
+                                                boxShadow: 24,
+                                                borderRadius: 2, 
+                                                width: "auto",
+                                                maxWidth: "50%",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                overflow: "hidden"
+                                            }}
+                                        >
+                                            <Box sx={{ p: 3, flexGrow: 1}}>
+                                                <Typography id="modal-modal-description" variant="h6" component="h2" sx={{ mt: 2 }}>
+                                                    Are you sure that you wish to delete your account? Please be aware that we cannot recover anything, if you decide to delete this account.
+                                                </Typography>
+
+                                                { errorAlert }
+
+                                                { successAlert }
+                                            </Box>
+
+                                            <Box
+                                                sx={{
+                                                    p: 2,
+                                                    display: "flex",
+                                                    justifyContent: "flex-start",
+                                                    gap: 2,
+                                                    borderTop: "1px solid #000000"
+                                                }}
+                                            >
+                                                <CustomButton
+                                                    variant="contained"
+
+                                                    color="error"
+
+                                                    size="large"
+
+                                                    onClick={deleteAccount}
+
+                                                    disabled={disableModalButtons}
+                                                >
+                                                    Delete Account
+                                                </CustomButton>
+
+                                                <CustomButton
+                                                    variant="contained"
+
+                                                    color="secondary"
+
+                                                    size="large"
+
+                                                    onClick={closeDeleteAccountPrompt}
+
+                                                    disabled={disableModalButtons}
+                                                    
+                                                >
+                                                    Cancel
+                                                </CustomButton>
+                                            </Box>
+                                        </Box>
+
+                                    </Modal>
+                                </Box>
+                            </>
+                        )}
                     </Box>
+                </Box>
+            </Box>
 
-                    <Footer />
-                </>
-            )}
+            <Footer />
 
         </div>
     );
