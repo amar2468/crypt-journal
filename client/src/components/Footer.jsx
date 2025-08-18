@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 
 const Footer = () => {
     return (
-        <Box width="100%" sx={{ backgroundColor: "#343a40", color: "#ffffff", mt: 10 }}>
+        <Box sx={{ backgroundColor: "#343a40", color: "#ffffff", mt: 20 }}>
 
             <br />
             
