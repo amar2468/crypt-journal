@@ -690,7 +690,7 @@ const Settings = () => {
 
                                 { successAlert }
 
-                                <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
+                                <Box display="flex" justifyContent="center" flexDirection="column" sx={{ mt: 3, mx: "auto" }}>
                                     <CustomInputField
                                         label="First Name"
 
@@ -820,7 +820,7 @@ const Settings = () => {
 
                                 { successAlert }
 
-                                <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
+                                <Box display="flex" justifyContent="center" flexDirection="column" sx={{ mt: 3, mx: "auto" }}>
                                     <Select
                                         name="timezone"
 
@@ -905,7 +905,7 @@ const Settings = () => {
                                     <br /> Please be aware that we cannot recover anything, if you decide to delete this account.
                                 </Paragraph>
 
-                                <Box display="flex" alignContent="center" flexDirection="column" width="30%" sx={{ mt: 3, mx: "auto" }}>
+                                <Box display="flex" alignContent="center" flexDirection="column" sx={{ mt: 3, mx: "auto", width: {xs: "100%", md: "60%"} }}>
                                     <CustomButton
                                         variant="contained"
 
@@ -998,9 +998,11 @@ const Settings = () => {
                         )}
                     </Box>
                 </Box>
-            </Box>
 
-            <Footer />
+                
+                <Footer />
+                
+            </Box>
 
         </div>
     );
