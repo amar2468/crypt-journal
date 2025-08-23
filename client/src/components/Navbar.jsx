@@ -34,8 +34,8 @@ const Navbar = () => {
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="fixed" color="transparent" sx={{ backgroundColor: "#FAF9F6" }}>
-                <Toolbar>
-                    <Box sx={{ flexGrow: 1 }}>
+                <Toolbar display="flex">
+                    <Box>
                         <Tooltip title="Home">
                             <Button color="inherit" onClick={() => navigate('/')}>
                                 <HomeIcon />
@@ -43,53 +43,53 @@ const Navbar = () => {
                         </Tooltip>
                     </Box>
 
-                    <Box sx={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-                        <Typography variant="h5" align="center" component="div">
-                            Crypt Journal
-                        </Typography>
+                    <Typography variant="h5" align="center" component="div" sx={{ flexGrow: 1, display: { xs: "none", sm: "block"} }}>
+                        Crypt Journal
+                    </Typography>
+
+                    <Box>
+                        <Tooltip title="Customer Support">
+                            <Button color="inherit">
+                                <SupportAgentIcon />
+                            </Button>
+                        </Tooltip>
+
+                        {!isLoggedIn && (
+                            <> 
+                                <Tooltip title="Sign Up/Register">
+                                    <Button color="inherit" onClick={() => navigate('/auth?mode=sign_up')}>
+                                        <PersonAddIcon />
+                                    </Button>
+                                </Tooltip>
+
+                                <Tooltip title="Login">
+                                    <Button color="inherit" onClick={() => navigate('/auth?mode=sign_in')}>
+                                        <LoginIcon />
+                                    </Button>
+                                </Tooltip>
+                            </>
+                        )}
+
+                        {isLoggedIn && (
+                            <>
+                            <Tooltip title="Logout">
+                                <Button color="inherit" onClick={() => {
+                                    localStorage.removeItem("token");
+                                    navigate('/auth?mode=sign_in');
+                                }}>
+                                    <LogoutIcon />
+                                </Button>
+                            </Tooltip>
+                            
+                            <Tooltip title="Account Settings">
+                                <Button color="inherit" onClick={() => navigate('/settings')}>
+                                    <SettingsIcon />
+                                </Button>
+                            </Tooltip>
+                            
+                            </>
+                        )}
                     </Box>
-
-                    <Tooltip title="Customer Support">
-                        <Button color="inherit">
-                            <SupportAgentIcon />
-                        </Button>
-                    </Tooltip>
-
-                    {!isLoggedIn && (
-                        <> 
-                            <Tooltip title="Sign Up/Register">
-                                <Button color="inherit" onClick={() => navigate('/auth?mode=sign_up')}>
-                                    <PersonAddIcon />
-                                </Button>
-                            </Tooltip>
-
-                            <Tooltip title="Login">
-                                <Button color="inherit" onClick={() => navigate('/auth?mode=sign_in')}>
-                                    <LoginIcon />
-                                </Button>
-                            </Tooltip>
-                        </>
-                    )}
-
-                    {isLoggedIn && (
-                        <>
-                        <Tooltip title="Logout">
-                            <Button color="inherit" onClick={() => {
-                                localStorage.removeItem("token");
-                                navigate('/auth?mode=sign_in');
-                            }}>
-                                <LogoutIcon />
-                            </Button>
-                        </Tooltip>
-                        
-                        <Tooltip title="Account Settings">
-                            <Button color="inherit" onClick={() => navigate('/settings')}>
-                                <SettingsIcon />
-                            </Button>
-                        </Tooltip>
-                        
-                        </>
-                    )}
 
                 </Toolbar>
             </AppBar>
