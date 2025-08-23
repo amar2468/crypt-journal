@@ -4,6 +4,7 @@ import Paragraph from '../components/Paragraph';
 import Box from '@mui/material/Box';
 import CustomInputField from '../components/CustomInputField';
 import CustomButton from '../components/CustomButton';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 import Footer from '../components/Footer';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -148,15 +149,32 @@ const ForgotPassword = () => {
         <div>
             <Navbar />
 
-            <Heading
-                text="Forgot My Password"
+            <Box display="flex">
+                <CustomButton
+                    variant="outlined"
 
-                variant="h4"
+                    startIcon={<ArrowBack />}
 
-                align="center"
+                    color="primary"
 
-                sx={{ mt: 15 }}
-            />
+                    onClick={() => navigate(-1)}
+
+                    sx={{ mt: 15 }}
+                >
+                    Back
+                </CustomButton>
+
+                
+                <Heading
+                    text="Forgot My Password"
+
+                    variant="h4"
+
+                    align="center"
+
+                    sx={{ mt: 15, flexGrow: 1 }}
+                />
+            </Box>
 
             <Paragraph
                 variant="body1"
@@ -171,7 +189,7 @@ const ForgotPassword = () => {
             {errorAlert}
             {successAlert}
 
-            <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
+            <Box display="flex" justifyContent="center" flexDirection="column" sx={{ mt: 5, mx: "auto", width: { xs: "90%", lg: "60%" } }}>
                 <CustomInputField
                     label="Email"
 
