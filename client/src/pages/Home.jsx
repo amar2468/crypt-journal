@@ -82,11 +82,12 @@ const Home = () => {
 
             </Box>
 
-            <Box display="flex" justifyContent="center" gap={4} sx={{ marginBottom: 6 }}>
+            <Box display="flex" justifyContent="center" alignItems="center" flexDirection={{ xs:"column", lg: "row" }} gap={4} sx={{ mx: "auto", marginBottom: 6 }}>
                 <FeatureDescriptionCard 
                     title="Customise Diary"
                     description="Give your diary a name & add fancy colours and designs, and much more..."
                     image={FeatureOnePicture}
+                    sx={{ flex: 1 }}
                 />
 
                 <FeatureDescriptionCard 
@@ -98,6 +99,8 @@ const Home = () => {
 
                     image={FeatureTwoPicture}
 
+                    sx={{ flex: 1 }}
+
                 />
 
                 <FeatureDescriptionCard 
@@ -106,6 +109,8 @@ const Home = () => {
                     description="Never have to worry about having limited entries. Enjoy unlimited entries!"
 
                     image={FeatureThreePicture}
+
+                    sx={{ flex: 1 }}
                 />
             </Box>
 
