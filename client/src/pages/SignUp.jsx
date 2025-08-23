@@ -237,9 +237,9 @@ const SignUp = ( { mode, switchForms } ) => {
 
                 localStorage.setItem("token", res.data.token);
 
-                // Once the user gets the message that their account creation was successful, wait 1 second and redirect to the homepage.
+                // Once the user gets the message that their account creation was successful, wait 1 second and redirect to the dashboard.
                 setTimeout(() => {
-                    navigate("/");
+                    navigate("/dashboard");
                 }, 1000);
 
                 return;
@@ -288,41 +288,41 @@ const SignUp = ( { mode, switchForms } ) => {
         <div>
             <Navbar />
 
-            <Box display="flex" justifyContent="center" sx={{ mt: 15 }}>
-                <ToggleButtonGroup
-                    value={mode}
+            <Box display="flex" alignItems="center" sx={{ width: "100%", mt: 15 }}>
+                <Box>
+                    <CustomButton
+                        variant="outlined"
 
-                    exclusive={true}
+                        startIcon={<ArrowBack />}
 
-                    onChange={switchForms}
+                        color="primary"
 
-                    aria-label="Sign Up/Login toggle"
-                >
-                    <ToggleButton value="sign_up">
-                        Sign Up
-                    </ToggleButton>
+                        onClick={() => navigate(-1)}
+                    >
 
-                    <ToggleButton value="sign_in">
-                        Login
-                    </ToggleButton>
-                </ToggleButtonGroup>
-            </Box>
-            
-            <Box sx={{ position: "relative", height: "auto" }}>
-                <CustomButton
-                    variant="outlined"
+                        Back
+                    </CustomButton>
+                </Box>
+                
+                <Box display="flex" justifyContent="center" sx={{ flexGrow: 1 }}>
+                    <ToggleButtonGroup
+                        value={mode}
 
-                    startIcon={<ArrowBack />}
+                        exclusive={true}
 
-                    color="primary"
+                        onChange={switchForms}
 
-                    sx={{ ml: 15, position: "absolute", mt: 5 }}
+                        aria-label="Sign Up/Login toggle"
+                    >
+                        <ToggleButton value="sign_up">
+                            Sign Up
+                        </ToggleButton>
 
-                    onClick={() => navigate(-1)}
-                >
-
-                    Back
-                </CustomButton>
+                        <ToggleButton value="sign_in">
+                            Login
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Box>
             </Box>
 
             <Heading
@@ -349,7 +349,7 @@ const SignUp = ( { mode, switchForms } ) => {
 
             {successAlert}
 
-            <Box display="flex" justifyContent="center" flexDirection="column" width="30%" sx={{ mt: 5, mx: "auto" }}>
+            <Box display="flex" justifyContent="center" flexDirection="column" sx={{ mt: 5, mx: "auto", width: { xs: "90%", lg: "60%" } }}>
                 <CustomInputField
                     label="First Name"
                     variant="outlined"
