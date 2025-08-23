@@ -14,6 +14,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/privacy_policy" element={<PrivacyPolicy />} />
         <Route path="/reset_password/:token" element={<ResetPassword />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
