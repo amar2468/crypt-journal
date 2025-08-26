@@ -38,7 +38,7 @@ const ResetPassword = () => {
         const logged_in = localStorage.getItem("token");
 
         if (logged_in) {
-            navigate("/");
+            navigate("/dashboard");
         }
 
         else {

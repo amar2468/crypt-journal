@@ -45,7 +45,7 @@ const Login = ( { mode, switchForms } ) => {
         const token = localStorage.getItem("token");
 
         if (token) {
-            navigate("/");
+            navigate("/dashboard");
         }
 
         else {
