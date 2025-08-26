@@ -79,6 +79,56 @@ router.get('/getUserAccountInfo', authenticateToken, async(req, res) => {
     }
 });
 
+// Getting the user's first name from the database, so that we can populate the heading in the dashboard with it.
+router.get("/getUserFirstName", authenticateToken, async(req, res) => {
+    // If the user is logged in, find the user's first name
+    if (req.user) {
+        // Attempt to retrieve the user's first name and return the first name from the database back to the frontend.
+        try {
+            // Retrieve the user record for the user that we want to extract the first name from
+            const user_record = await db.query("SELECT * FROM users WHERE email=$1", [req.user.email]);
+
+            // If the user was found, proceed with retrieving the user's first name
+            if (user_record.rowCount > 0) {
+                const first_name = user_record.rows[0].first_name;
+
+                // Returning a 200 status, along with a success message and the user's first name
+                return res.status(200).json({
+                    message: "User's first name retrieved successfully",
+                    data: {
+                        first_name
+                    }
+                });
+            }
+
+            // If there were no records found for that user, just send back a message informing the user about that.
+            else {
+                return res.status(404).json({
+                    message: "User not found."
+                });
+            }
+        }
+
+        // If there was an issue with retrieving the user's first name, inform the user about it.
+        catch {
+            console.error("Issue encountered when getting the user's first name: ", error);
+
+            return res.status(500).json({
+                message: "Failed to retrieve user's first name."
+            });
+        }
+    }
+
+    // If the user is not logged in, don't allow the retrieval of the user's first name
+    else {
+        console.error("The user does not have a valid token associated with their account. The user may need to log off and log back on.");
+
+        return res.status(401).json({
+            message: "Unauthorised: No token detected. Please log off and log back into your account."
+        });
+    }
+});
+
 // Getting the user preferences from the database, so that we can populate the "User Preferences" section with this info.
 router.get("/getUserPreferences", authenticateToken, async(req, res) => {
     // If the user is logged in, allow the retrieval of the user preferences
