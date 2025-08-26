@@ -13,9 +13,35 @@ import FeatureDescriptionCard from '../components/FeatureDescriptionCard';
 import CustomerReviewCard from '../components/CustomerReviewCard';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const Home = () => {
     const navigate = useNavigate();
+
+    // State variable which tracks whether the token check was completed, eliminating the issue of the page flashing up before the
+    // token check is done
+    const [authChecked, setAuthChecked] = useState(false);
+
+    // Checking whether the token is present - if it is there, it means that the user is logged in, so they should be redirected
+    // away from the page. If there is no token, we will set the auth check to true, meaning that the page can be safely displayed.
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            navigate("/dashboard");
+        }
+
+        else {
+            setAuthChecked(true);
+        }
+
+    }, [navigate]);
+
+    // If the token check indicates that there is no token, we will not allow the displaying of the page.
+    if (!authChecked) {
+        return null;
+    }
     
     return (
         <div>
@@ -91,11 +117,10 @@ const Home = () => {
                 />
 
                 <FeatureDescriptionCard 
-                    title="Password Lock Diary & MFA Protection"
+                    title="Password Lock Diary"
 
                     description="Worried that someone may get into your account and view your secret diary?
-                    Password lock it. Worried that someone might figure out the password and gain access?
-                    Use MFA protection. Your secret diary can be protected to whatever degree you deem necessary!"
+                    Password lock it!"
 
                     image={FeatureTwoPicture}
 
